@@ -1,4 +1,4 @@
-# GOVERNOR DAO - Mine
+# GOVERNOR DAO - Stake
 
 To my frens working on this project,
 
