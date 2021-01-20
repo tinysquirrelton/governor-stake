@@ -1,0 +1,71 @@
+@import "styles/breakpoints.scss";
+@import "assets/fonts/fonts.scss";
+
+body {
+  margin: 0;
+  font-family: "OpenSans" !important;
+  background: linear-gradient(
+    -90deg,
+    rgba(6, 0, 38, 1),
+    rgba(57, 52, 161, 0.94)
+  );
+}
+
+:focus {
+  outline: none !important;
+}
+
+.Toastify__toast-container {
+  z-index: 10000000 !important;
+  &.Toastify__toast-container--bottom-right {
+    top: auto;
+    bottom: 0;
+  }
+  & .Toastify__toast {
+    font-family: "OpenSans" !important;
+    @include md {
+      border-radius: 0.25rem !important;
+    }
+  }
+}
+
+.max-width-container {
+  display: block;
+  width: 90%;
+  margin: 0 auto;
+  @include rwd(1440) {
+    max-width: 1440px;
+  }
+}
+
+.gdao-phoenix-bg {
+  display: block;
+  position: fixed;
+  z-index: 1;
+  height: 100vh;
+  bottom: -50vh;
+  right: 0;
+  transform: translateX(45%);
+  object-fit: cover;
+  filter: brightness(0.85);
+  content: url("./assets/logos/governor-bg.png");
+  @include md {
+    bottom: -40vh;
+  }
+}
+
+.gdao-texture-bg {
+  display: block;
+  position: fixed;
+  z-index: 2;
+  bottom: -40vh;
+  right: 0;
+  object-fit: cover;
+  content: url("./assets/texture/bg-texture.png");
+  @include sm {
+    bottom: -10vh;
+  }
+  @include md {
+    bottom: 0;
+  }
+}

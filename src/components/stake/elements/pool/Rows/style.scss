@@ -1,0 +1,242 @@
+@import "../../../../../styles/breakpoints.scss";
+@import "../../../../../styles/shadows.scss";
+
+.stake-row-container {
+  display: block;
+  position: relative;
+  border: 1px solid #4a8cc9;
+  border-radius: 0.75rem;
+  background-color: white;
+  margin: 50px 0 25px 0;
+  overflow: hidden;
+  box-shadow: $shadow-soft-light;
+
+  & .content {
+    display: flex;
+    align-items: center;
+    padding: 22px 8px;
+    background-color: #354e8e;
+    cursor: pointer;
+    & .row-logo {
+      display: block;
+      width: 50px;
+      height: 50px;
+      text-align: center;
+      margin-left: 20px;
+      & img {
+        object-fit: contain;
+        max-height: 50px;
+        max-width: 50px;
+      }
+    }
+    & .row-name {
+      display: block;
+      margin-left: 20px;
+      text-align: center;
+      width: 125px;
+      color: white;
+      & .title {
+        font-size: 18px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+      }
+      & .subtitle {
+        font-size: 12px;
+        font-weight: 300;
+      }
+    }
+    & .row-apy,
+    & .row-tvl,
+    & .row-deposit {
+      display: block;
+      color: white;
+      text-align: center;
+      margin-left: 40px;
+      width: 20%;
+      & .title {
+        font-size: 12px;
+        font-weight: 300;
+        margin-top: 4px;
+      }
+      & .value {
+        font-size: 18px;
+        font-weight: 500;
+        margin-top: 6px;
+      }
+    }
+    & .row-apy {
+      width: 15%;
+    }
+  }
+
+  & .expanded {
+    display: block;
+    background-color: white;
+    & .statistics {
+      display: flex;
+      align-items: center;
+      padding: 30px 34px;
+      background-color: #4a8cc9;
+      color: white;
+      & .title {
+        font-size: 18px;
+        font-weight: 500;
+        padding: 0 25px 0 74px;
+      }
+      & .stats {
+        display: block;
+        letter-spacing: 0.5px;
+        text-align: center;
+        &:nth-of-type(2) {
+          width: 25%;
+        }
+        &:nth-of-type(3) {
+          width: 21.5%;
+        }
+        &:nth-of-type(4) {
+          width: 30%;
+        }
+        & .title {
+          font-weight: 300;
+          font-size: 12px;
+          padding: 0;
+        }
+        & .value {
+          font-size: 18px;
+          font-weight: 500;
+        }
+      }
+    }
+    & .fields {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 30px 104px;
+
+      & .input-field {
+        display: block;
+        width: 45%;
+        & .input-label {
+          display: block;
+          padding-bottom: 8px;
+          font-size: 14px;
+          font-weight: 500;
+          & span {
+            font-size: 12px;
+            font-weight: 400;
+          }
+        }
+        & .input-subtitle {
+          display: block;
+          font-size: 12px;
+          margin: 6px 0;
+        }
+        & .input-container {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          border: solid 1px darkgrey;
+          border-radius: 0.5rem;
+          padding: 8px 14px;
+          & .max-btn {
+            font-size: 14px;
+            color: #999999;
+            border: none;
+            background-color: transparent;
+          }
+          & input[type="number"] {
+            display: block;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            text-align: right;
+            width: 100px;
+            margin-top: 2px;
+            border: none;
+            background-color: transparent;
+            &:focus {
+              outline: none !important;
+            }
+          }
+        }
+        & .action-btn {
+          display: block;
+          margin: 8px auto 20px 0;
+          background-color: white;
+          border: solid 1px lightgray;
+          border-radius: 0.5rem;
+          box-shadow: $shadow-tiny;
+          color: #354e8e;
+          font-size: 14px;
+          font-weight: 600;
+          padding: 10px 0;
+          width: 150px;
+          &:hover {
+            color: white;
+            background-color: #4a8cc9;
+          }
+          &:disabled,
+          &[disabled] {
+            border-color: #cccccc;
+            color: #aaaaaa;
+            background-color: #dddddd;
+          }
+        }
+      }
+      & .input-field {
+        &:first-child {
+          & .input-label {
+            text-align: right;
+          }
+          & .input-subtitle {
+            text-align: right;
+          }
+          & .action-btn {
+            margin: 8px 0 20px auto;
+          }
+        }
+      }
+    }
+    & .claims {
+      display: block;
+      text-align: center;
+      & .title {
+        display: block;
+        font-size: 12px;
+        font-weight: 300;
+      }
+      & .value {
+        display: block;
+        font-size: 22px;
+        font-weight: 500;
+        color: #354e8e;
+        margin: 6px 0 18px 0;
+      }
+      & .claim-btn {
+        display: block;
+        margin: 8px auto 20px auto;
+        background-color: white;
+        border: solid 1px lightgray;
+        border-radius: 0.5rem;
+        box-shadow: $shadow-tiny;
+        color: #354e8e;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 10px 0;
+        width: 150px;
+        cursor: pointer;
+        &:hover {
+          color: white;
+          background-color: #4a8cc9;
+        }
+        &:disabled,
+        &[disabled] {
+          border-color: #cccccc;
+          color: #aaaaaa;
+          background-color: #dddddd;
+        }
+      }
+    }
+  }
+}

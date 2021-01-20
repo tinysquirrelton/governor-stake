@@ -1,0 +1,190 @@
+@import "../../styles/breakpoints.scss";
+@import "../../styles/shadows.scss";
+
+.stake-container {
+  display: block;
+  position: relative;
+  z-index: 10;
+  max-width: 1000px;
+  min-height: calc(100vh - 75px);
+  margin: 0 auto;
+  @include lg {
+    min-height: calc(100vh - 250px);
+  }
+  & .stake-title {
+    display: block;
+    position: relative;
+    & .title-text {
+      display: block;
+      width: 100%;
+      text-align: center;
+      font-size: 28px;
+      font-weight: 500;
+      color: white;
+      letter-spacing: 1px;
+      @include lg {
+        font-size: 32px;
+        margin: 50px 0 25px 0;
+      }
+    }
+  }
+  & .stake-subtitle {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    letter-spacing: 1px;
+    margin: 10px 0;
+    & span {
+      font-weight: 300;
+      opacity: 0.75;
+    }
+  }
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled,
+button[disabled] {
+  pointer-events: none;
+  cursor: default;
+}
+
+.nft-container {
+  display: block;
+  position: relative;
+  z-index: 10;
+  margin: 0 auto;
+
+  & .nft-title {
+    display: block;
+    position: relative;
+    width: 100%;
+    text-align: center;
+    font-size: 28px;
+    font-weight: 500;
+    color: white;
+    letter-spacing: 1px;
+    margin: 75px 0 0 0;
+    @include lg {
+      font-size: 32px;
+    }
+  }
+  & .nft-subtitle {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 300;
+    color: white;
+    letter-spacing: 1px;
+    margin: 10px 0;
+    & span {
+      font-weight: 300;
+      opacity: 0.75;
+    }
+  }
+  & .nft-card-container {
+    display: block;
+    position: relative;
+
+    img {
+      max-height: 250px;
+      margin: auto;
+      display: inline-block;
+      object-fit: cover;
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      margin: 0;
+      font-weight: 400;
+    }
+
+    .card {
+      display: block;
+      position: relative;
+      width: 300px;
+      padding: 1em;
+      border-radius: 15px;
+      margin: 25px auto;
+      background: #ddd;
+      text-align: left;
+      box-shadow: $shadow-regular-light;
+
+      &__caption {
+        background-color: rgba(#ffffff, 0.65);
+        padding: 1em;
+        position: relative;
+        border-radius: 0 0 3px 3px;
+      }
+      &__image-container {
+        background-color: #000000;
+        text-align: center;
+        padding: 1em 1em 0;
+        border-radius: 3px 3px 0 0;
+      }
+      &__type {
+        position: absolute;
+        top: 0;
+        right: 1em;
+        transform: translateY(-50%);
+        color: #ffffff;
+        text-transform: uppercase;
+        font-family: "Open Sans Condensed", "Open Sans", helvetica, sans-serif;
+        letter-spacing: 0.1em;
+        padding: 0.25em;
+        line-height: 1;
+        border-radius: 2px;
+        background: #bbbbbb;
+      }
+      &__label {
+        font-size: 10px;
+        text-transform: uppercase;
+        font-weight: 400;
+        display: block;
+        margin-bottom: 3px;
+      }
+      &__name {
+        text-align: center;
+        font-size: 1.5em;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+      &__stats {
+        margin: 1em 0;
+        width: 100%;
+        th {
+          text-align: right;
+          font-weight: 300;
+        }
+        th,
+        td {
+          width: 50%;
+          padding: 0.25em 0.5em 0;
+        }
+      }
+      &__abilities {
+        display: flex;
+        justify-content: space-between;
+      }
+      &__ability {
+        margin-top: 1em;
+        flex: 1 0;
+      }
+      &--dark {
+        background: linear-gradient(120deg, #34255c 0%, #2d1d69 100%);
+        box-shadow: 0px 5px 20px -10px #000851;
+        .card__type {
+          background-color: #231b68;
+        }
+      }
+    }
+  }
+}
