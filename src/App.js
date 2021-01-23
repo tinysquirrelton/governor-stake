@@ -59,29 +59,19 @@ export default class App extends Component {
       (testnet && this.wethContract !== null && this.usdcContract !== null)
     ) {
       await this.token.getContract(this.w3);
-      await this.token.getLPContract(this.w3);
       await this.token.getPrice(this.w3, this.wethContract, this.usdcContract);
-      await this.token.getAPY(this.w3, this.wethContract, this.usdcContract);
       await this.token.getTVL(this.w3);
       if (isConnected && this.stakeContract !== null) {
         await this.token.getDepositable(this.w3);
         await this.token.getDeposited(this.w3, this.stakeContract);
-        await this.token.getPendingGDAO(this.w3, this.stakeContract);
+        await this.token.getPendingLOYAL(this.w3, this.stakeContract);
       }
       this.setState({ isConnected: isConnected });
     }
   }
 
   getToken = () => {
-    return new Token(
-      pool.address,
-      pool.lpAddress,
-      pool.name,
-      pool.text,
-      pool.unit,
-      pool.logo,
-      pool.pid
-    );
+    return new Token(pool.address, pool.name, pool.text, pool.unit, pool.logo);
   };
 
   getContract = (w3, address) => {
@@ -131,8 +121,8 @@ export default class App extends Component {
     } else if (changeType === "CHANGED_ACCOUNT") {
       const tasks = this.tokens.map(async (token) => {
         await token.getDepositable(this.w3);
-        await token.getDeposited(this.w3, this.farmContract);
-        await token.getPendingGDAO(this.w3, this.farmContract);
+        await token.getDeposited(this.w3, this.stakeContract);
+        await token.getPendingLOYAL(this.w3, this.stakeContract);
       });
       await Promise.all(tasks);
       this.setState({ isConnected: true });

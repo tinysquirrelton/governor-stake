@@ -34,58 +34,25 @@ export default class Pool extends Component {
   };
 
   onConvert = (n) => {
-    if (this.props.token.unit === "WBTC") {
-      n = Math.floor(n * 10 ** 7) / 10 ** 5;
-      return this.props.w3.web3.utils.toWei(n.toString(), "mwei");
-    } else if (this.props.token.unit === "USDC") {
-      n = Math.floor(n * 10 ** 5) / 10 ** 5;
-      return this.props.w3.web3.utils.toWei(n.toString(), "mwei");
-    } else {
-      return this.props.w3.web3.utils.toWei(n.toString());
-    }
+    return this.props.w3.web3.utils.toWei(n.toString());
   };
 
   onMaxDeposit = () => {
     let n = this.props.token.depositable;
-
-    if (this.props.token.unit === "USDC") {
-      n = Math.floor(n / 100) / 10 ** 4;
-      this.setState({ toDeposit: n });
-    } else if (this.props.token.unit === "WBTC") {
-      n = Math.floor(n / 100) / 10 ** 6;
-      this.setState({ toDeposit: n });
-    } else {
-      n = Math.floor(n / 10 ** 12) / 10 ** 6;
-      this.setState({ toDeposit: n });
-    }
+    n = Math.floor(n / 10 ** 12) / 10 ** 6;
+    this.setState({ toDeposit: n });
   };
 
   onMaxWithdraw = () => {
     let n = this.props.token.deposited;
-
-    if (this.props.token.unit === "USDC") {
-      n = Math.floor(n / 100) / 10 ** 4;
-      this.setState({ toWithdraw: n });
-    } else if (this.props.token.unit === "WBTC") {
-      n = Math.floor(n / 100) / 10 ** 6;
-      this.setState({ toWithdraw: n });
-    } else {
-      n = Math.floor(n / 10 ** 12) / 10 ** 6;
-      this.setState({ toWithdraw: n });
-    }
+    n = Math.floor(n / 10 ** 12) / 10 ** 6;
+    this.setState({ toWithdraw: n });
   };
 
   onApprove = () => {
     const { w3, token, stakeContract } = this.props;
     let b = token.depositable * 2;
-    let uB;
-    if (this.props.token.unit === "USDC") {
-      uB = this.onConvert(b / 10 ** 6);
-    } else if (this.props.token.unit === "WBTC") {
-      uB = this.onConvert(b / 10 ** 8);
-    } else {
-      uB = this.onConvert(b / 10 ** 18);
-    }
+    let uB = this.onConvert(b / 10 ** 18);
 
     token.contract.methods
       .approve(stakeContract._address, uB)

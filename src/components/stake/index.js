@@ -5,15 +5,6 @@ import { roundValue } from "../../utilities/helpers";
 import "./style.scss";
 
 export default class Stake extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
-  updateState = () => {
-    this.setState({});
-  };
-
   render() {
     return (
       <div className="max-width-container">
