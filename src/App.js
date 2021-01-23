@@ -65,13 +65,14 @@ export default class App extends Component {
         await this.token.getDepositable(this.w3);
         await this.token.getDeposited(this.w3, this.stakeContract);
         await this.token.getPendingLOYAL(this.w3, this.stakeContract);
+        await this.token.getEstimatedDailyLOYAL(this.w3, this.stakeContract);
       }
       this.setState({ isConnected: isConnected });
     }
   }
 
   getToken = () => {
-    return new Token(pool.address, pool.name, pool.text, pool.unit, pool.logo);
+    return new Token(pool.address, pool.lpAddress, pool.name, pool.text, pool.unit, pool.logo);
   };
 
   getContract = (w3, address) => {

@@ -94,4 +94,8 @@ export default class W3C {
   getWeiToETH(balance) {
     return BigNumber(this.web3.utils.fromWei(balance, "ether")).toNumber();
   }
+
+  getWeiToETHString(balance) {
+    return BigNumber(this.web3.utils.fromWei(balance, "ether")).toString(10);
+  }
 }

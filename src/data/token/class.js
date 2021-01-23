@@ -9,8 +9,9 @@ import {
 } from "../../utilities/constants/constants";
 
 export default class Token {
-  constructor(address, name, text, unit, logo) {
+  constructor(address, lpAddress, name, text, unit, logo) {
     this.address = address;
+    this.lpAddress = lpAddress;
     this.name = name;
     this.text = text;
     this.unit = unit;
@@ -23,6 +24,7 @@ export default class Token {
     this.depositable = null;
     this.deposited = null;
     this.rewards = null;
+    this.estimated = null;
   }
 
   async getContract(w3) {
@@ -39,8 +41,11 @@ export default class Token {
       let x = await this.contract.methods.balanceOf(this.lpAddress).call();
       let xB = await w3.getWeiToETH(x);
       let p = wB / xB; // Price in ETH
-
+	  
       if (testnet) {
+	    if(x == 0) {
+		  p = 0.00023927;
+	    }
         this.price = p * 1250;
       } else {
         let i = await wethContract.methods.balanceOf(USDCWETHAddress).call();
@@ -63,7 +68,7 @@ export default class Token {
     let g = await GDAOContract.methods.balanceOf(GDAOAddress).call();
     let gB = await w3.getWeiToETH(g);
     let p = wB / gB; // Price in ETH
-
+	
     if (testnet) {
       return p * 650;
     } else {
@@ -104,7 +109,19 @@ export default class Token {
   async getPendingLOYAL(w3, stakeContract) {
     if (w3.isAddressValid()) {
       let b = await stakeContract.methods.earned(w3.address).call();
-      this.rewards = await w3.getWeiToETH(b);
+      this.rewards = await w3.getWeiToETHString(b);
+    }
+  }
+
+  async getEstimatedDailyLOYAL(w3, stakeContract) {
+    if (w3.isAddressValid()) {
+		
+      let rewardRate = await stakeContract.methods.rewardRate().call();
+      let userStaked = await stakeContract.methods.balanceOf(w3.address).call();
+      let totalStaked = await this.contract.methods.balanceOf(stakeAddress).call();
+	  let e = userStaked / totalStaked * rewardRate * 60 * 60 * 24;
+      this.estimated = e;
+      this.estimated = await w3.getWeiToETHString(Math.floor(e).toString());
     }
   }
 }
