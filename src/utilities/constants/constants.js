@@ -11,7 +11,7 @@ export const USDCWETHAddress = "0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc";
 
 // GDAO Address
 export const GDAOAddress = testnet
-  ? "0x060dea069f4a0cf3f359152ec02f048ce9930686"
+  ? "0xf35da56343622244f9e1fb0b87950fbfd7fa991b"
   : "0x515d7E9D75E2b76DB60F8a051Cd890eBa23286Bc";
 
 // GDAO-WETH LP Address
@@ -62,7 +62,7 @@ export const pool = testnet ? testpool : prodpool;
 
 // Stake Address
 export const stakeAddress = testnet
-  ? "0xdf2A82d8a34F139f649000e43f60C921F769a947"
+  ? "0xd648477c22997e94e52a6cb666fa0b91c44ed185"
   : "0x4DaC3e07316D2A31baABb252D89663deE8F76f09";
 
 //------------------------------

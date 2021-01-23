@@ -20,8 +20,8 @@ const Row = (props) => {
       />
       <RowItem
         c={"row-apy"}
-        t={"APY"}
-        s={`${roundValue(token.apy)}%`}
+        t={"Daily reward forecast"}
+        s={`${roundValue(token.apy)} LOYAL`}
         isConnected={isConnected}
       />
       <RowItem

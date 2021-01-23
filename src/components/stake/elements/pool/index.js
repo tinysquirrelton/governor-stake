@@ -99,21 +99,21 @@ export default class Pool extends Component {
       .catch((err) => toast.error("Could not approve."));
   };
 
-  onDepositExecute = () => {
+  onStakeExecute = () => {
     const { w3, token, stakeContract } = this.props;
     const tD = this.state.toDeposit;
     let d = this.onConvert(tD);
 
     stakeContract.methods
-      .deposit(token.pid, d)
+      .stake(d)
       .send({ from: w3.address })
       .then((res) => {
-        toast.success("Successfully deposited.");
+        toast.success("Successfully staked.");
         this.setState(() => ({
           toDeposit: 0.0,
         }));
       })
-      .catch((err) => toast.error("Could not deposit."));
+      .catch((err) => toast.error("Could not stake."));
   };
 
   onWithdrawExcecute = () => {
@@ -122,7 +122,7 @@ export default class Pool extends Component {
     let w = this.onConvert(tW);
 
     stakeContract.methods
-      .withdraw(token.pid, w)
+      .withdraw(w)
       .send({ from: w3.address })
       .then((res) => {
         toast.success("Successfully withdrawn.");
@@ -177,7 +177,7 @@ export default class Pool extends Component {
             />
             <Statistics
               t={"Claimable Rewards"}
-              v={`${roundValue(token.rewards)} GDAO`}
+              v={`${roundValue(token.rewards)} LOYAL`}
               isConnected={isConnected}
             />
           </div>
@@ -187,7 +187,7 @@ export default class Pool extends Component {
               current={convertToETH(token.depositable, this.props.token.unit)}
               unit={token.unit}
               onMax={this.onMaxDeposit}
-              onAction={this.onDepositExecute}
+              onAction={this.onStakeExecute}
               onAction1={this.onApprove}
               value={toDeposit}
               onChange={(e) => this.onDepositChange(e)}

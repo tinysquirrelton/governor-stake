@@ -5,7 +5,6 @@ import {
   testnet,
   USDCWETHAddress,
   GDAOAddress,
-  GDAOWETHLPAddress,
   stakeAddress,
 } from "../../utilities/constants/constants";
 
@@ -112,11 +111,11 @@ export default class Token {
   }
 
   async getGDAOPrice(w3, wethContract, usdcContract) {
-    let w = await wethContract.methods.balanceOf(GDAOWETHLPAddress).call();
+    let w = await wethContract.methods.balanceOf(GDAOAddress).call();
     let wB = await w3.getWeiToETH(w);
 
     let GDAOContract = await new w3.web3.eth.Contract(ERC20.abi, GDAOAddress);
-    let g = await GDAOContract.methods.balanceOf(GDAOWETHLPAddress).call();
+    let g = await GDAOContract.methods.balanceOf(GDAOAddress).call();
     let gB = await w3.getWeiToETH(g);
     let p = wB / gB; // Price in ETH
 
@@ -170,7 +169,7 @@ export default class Token {
 
   async getDeposited(w3, stakeContract) {
     if (w3.isAddressValid()) {
-      let b = await stakeContract.methods.userInfo(this.pid, w3.address).call();
+      let b = await stakeContract.methods.balanceOf(w3.address).call();
       //let bB;
       // if (this.name === "USDC") {
       //   bB = b.amount / 10 ** 6;
@@ -179,14 +178,14 @@ export default class Token {
       // } else {
       //   bB = b.amount
       // }
-      this.deposited = b.amount;
+      this.deposited = b;
     }
   }
 
   async getPendingGDAO(w3, stakeContract) {
     if (w3.isAddressValid()) {
       let b = await stakeContract.methods
-        .pendingGDAO(this.pid, w3.address)
+        .earned(w3.address)
         .call();
       this.rewards = await w3.getWeiToETH(b);
     }

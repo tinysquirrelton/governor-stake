@@ -5,7 +5,7 @@ export const testpool = {
   name: "GDAO",
   text: "Governor DAO",
   unit: "GDAO",
-  address: "0xb354b410071a12b5ccb28bd3275a44c6dc9dbc61",
-  lpAddress: "0xb354b410071a12b5ccB28Bd3275A44C6Dc9DBC61",
+  address: "0xf35da56343622244f9e1fb0b87950fbfd7fa991b",
+  lpAddress: "0xf35da56343622244f9e1fb0b87950fbfd7fa991b",
   pid: "0",
 };
