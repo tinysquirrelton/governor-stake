@@ -62,7 +62,7 @@ export const pool = testnet ? testpool : prodpool;
 
 // Stake Address
 export const stakeAddress = testnet
-  ? "0xd648477c22997e94e52a6cb666fa0b91c44ed185"
+  ? "0x20bEA2175D59F1c59BA0D76e934E296b26d8e003"
   : "0x4DaC3e07316D2A31baABb252D89663deE8F76f09";
 
 //------------------------------

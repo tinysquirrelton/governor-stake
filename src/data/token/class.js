@@ -43,7 +43,7 @@ export default class Token {
       let p = wB / xB; // Price in ETH
 	  
       if (testnet) {
-	    if(x == 0) {
+	    if(x === 0) {
 		  p = 0.00023927;
 	    }
         this.price = p * 1250;
@@ -108,20 +108,24 @@ export default class Token {
 
   async getPendingLOYAL(w3, stakeContract) {
     if (w3.isAddressValid()) {
-      let b = await stakeContract.methods.earned(w3.address).call();
+      let b = await stakeContract.methods
+      .earned(w3.address)
+      .call();
       this.rewards = await w3.getWeiToETHString(b);
     }
   }
 
   async getEstimatedDailyLOYAL(w3, stakeContract) {
     if (w3.isAddressValid()) {
-		
+    
       let rewardRate = await stakeContract.methods.rewardRate().call();
       let userStaked = await stakeContract.methods.balanceOf(w3.address).call();
       let totalStaked = await this.contract.methods.balanceOf(stakeAddress).call();
-	  let e = userStaked / totalStaked * rewardRate * 60 * 60 * 24;
-      this.estimated = e;
-      this.estimated = await w3.getWeiToETHString(Math.floor(e).toString());
+    userStaked = await w3.getWeiToETH(userStaked);
+    totalStaked = await w3.getWeiToETH(totalStaked);
+    BigNumber.config({ DECIMAL_PLACES: 18 });
+    let e = new BigNumber(userStaked / totalStaked * rewardRate * 60 * 60 * 24);
+      this.estimated = w3.getWeiToETH(e.toString(10));
     }
   }
 }
