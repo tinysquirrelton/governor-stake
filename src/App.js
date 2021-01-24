@@ -63,7 +63,7 @@ export default class App extends Component {
       await this.token.getTVL(this.w3);
       if (isConnected && this.stakeContract !== null) {
         await this.token.getStakeable(this.w3);
-        await this.token.getDeposited(this.w3, this.stakeContract);
+        await this.token.getStaked(this.w3, this.stakeContract);
         await this.token.getPendingLOYAL(this.w3, this.stakeContract);
         await this.token.getEstimatedDailyLOYAL(this.w3, this.stakeContract);
       }
@@ -122,7 +122,7 @@ export default class App extends Component {
     } else if (changeType === "CHANGED_ACCOUNT") {
       const tasks = this.tokens.map(async (token) => {
         await token.getStakeable(this.w3);
-        await token.getDeposited(this.w3, this.stakeContract);
+        await token.getStaked(this.w3, this.stakeContract);
         await token.getPendingLOYAL(this.w3, this.stakeContract);
       });
       await Promise.all(tasks);

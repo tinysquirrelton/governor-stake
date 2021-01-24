@@ -22,7 +22,7 @@ export default class Token {
     this.tvl = null;
     // Values below will be nullified on account change/disconnect
     this.stakeable = null;
-    this.deposited = null;
+    this.staked = null;
     this.rewards = null;
     this.estimated = null;
   }
@@ -99,10 +99,10 @@ export default class Token {
     }
   }
 
-  async getDeposited(w3, stakeContract) {
+  async getStaked(w3, stakeContract) {
     if (w3.isAddressValid()) {
       let b = await stakeContract.methods.balanceOf(w3.address).call();
-      this.deposited = b;
+      this.staked = b;
     }
   }
 

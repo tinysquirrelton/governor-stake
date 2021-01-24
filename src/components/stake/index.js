@@ -10,7 +10,7 @@ export default class Stake extends Component {
       <div className="max-width-container">
         <div className="stake-container">
           <div className="stake-title">
-            <div className="title-text">GDAO Stake</div>
+            <div className="title-text">Loyalty Mine</div>
             <ConnectButton w3={this.props.w3} />
           </div>
           <div className="stake-subtitle">
@@ -27,7 +27,7 @@ export default class Stake extends Component {
           </div>
           <div className="stake-subtitle">
             <a
-              href="https://i.imgur.com/lYdHXb2.gif"
+              href="https://rinkeby.etherscan.io/address/0xd648477c22997e94e52a6cb666fa0b91c44ed185#code"
               rel="noreferrer"
               target="_blank"
               style={{

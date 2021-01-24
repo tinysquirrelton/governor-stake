@@ -1,6 +1,6 @@
 import React from "react";
 import { RowItem } from "../RowItem";
-import { roundValue, convertToETH } from "../../../../../utilities/helpers";
+import { roundValue/*, convertToETH */} from "../../../../../utilities/helpers";
 
 import "./style.scss";
 
@@ -17,13 +17,14 @@ const Row = (props) => {
         t={token.name}
         s={token.text}
         isConnected={true}
-      />
+      /> 
       <RowItem
         c={"row-apy"}
-        t={"Daily reward forecast"}
+        t={"Daily Rewards"}
         s={`${roundValue(token.estimated)} LOYAL`}
         isConnected={isConnected}
       />
+      {/*
       <RowItem
         c={"row-tvl"}
         t={"TVL"}
@@ -32,11 +33,13 @@ const Row = (props) => {
       />
       <RowItem
         c={"row-stake"}
-        t={"Available to stake"}
+        t={"Available"}
         s={convertToETH(token.stakeable, token.unit)}
         isConnected={isConnected}
       />
+      */}
     </div>
+    //</div>
   );
 };
 
