@@ -162,7 +162,7 @@ export default class Pool extends Component {
               isConnected={isConnected}
               isApproved={isApproved}
               isDeposit={true}
-              subtitle={"Deposit Fee: 2%"}
+              subtitle={"Stake GDAO"}
             />
             <InputField
               title={"Staked in contract"}

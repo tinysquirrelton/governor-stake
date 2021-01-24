@@ -34,9 +34,11 @@ export const InputField = ({
         />
       </div>
     </div>
-    {subtitle !== null && <div className={isDeposit ? "input-subtitle attention" : "input-subtitle"}>{subtitle}</div>}
+    {subtitle !== null && <div className="input-subtitle">{subtitle}</div>}
     <div className="button-box">
-      <button className={isDeposit ? "action-btn" : "hide"} onClick={onAction1}>Approve</button>
+      <button className={isDeposit ? "action-btn" : "hide"} onClick={onAction1}>
+        Approve
+      </button>
       <button
         className="action-btn"
         onClick={onAction}
