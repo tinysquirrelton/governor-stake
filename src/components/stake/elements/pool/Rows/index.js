@@ -31,9 +31,9 @@ const Row = (props) => {
         isConnected={isConnected}
       />
       <RowItem
-        c={"row-deposit"}
-        t={"Available to deposit"}
-        s={convertToETH(token.depositable, token.unit)}
+        c={"row-stake"}
+        t={"Available to stake"}
+        s={convertToETH(token.stakeable, token.unit)}
         isConnected={isConnected}
       />
     </div>

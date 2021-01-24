@@ -12,7 +12,7 @@ import {
   wETHAddress,
   USDCAddress,
   stakeAddress,
-  GDAOAddress,
+  GDAOAddress, // stakingToken
   AirdropAddress,
   MinesAddress,
   AirdropRewardAddresss,
@@ -62,7 +62,7 @@ export default class App extends Component {
       await this.token.getPrice(this.w3, this.wethContract, this.usdcContract);
       await this.token.getTVL(this.w3);
       if (isConnected && this.stakeContract !== null) {
-        await this.token.getDepositable(this.w3);
+        await this.token.getStakeable(this.w3);
         await this.token.getDeposited(this.w3, this.stakeContract);
         await this.token.getPendingLOYAL(this.w3, this.stakeContract);
         await this.token.getEstimatedDailyLOYAL(this.w3, this.stakeContract);
@@ -114,14 +114,14 @@ export default class App extends Component {
   setChanged = async (changeType) => {
     if (changeType === "DISCONNECTED") {
       this.tokens.forEach((token) => {
-        token.depositable = null;
-        token.deposited = null;
+        token.stakeable = null;
+        token.staked = null;
         token.rewards = null;
       });
       this.setState({ isConnected: false });
     } else if (changeType === "CHANGED_ACCOUNT") {
       const tasks = this.tokens.map(async (token) => {
-        await token.getDepositable(this.w3);
+        await token.getStakeable(this.w3);
         await token.getDeposited(this.w3, this.stakeContract);
         await token.getPendingLOYAL(this.w3, this.stakeContract);
       });

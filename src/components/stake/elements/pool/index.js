@@ -38,20 +38,20 @@ export default class Pool extends Component {
   };
 
   onMaxDeposit = () => {
-    let n = this.props.token.depositable;
+    let n = this.props.token.stakeable;
     n = Math.floor(n / 10 ** 12) / 10 ** 6;
     this.setState({ toDeposit: n });
   };
 
   onMaxWithdraw = () => {
-    let n = this.props.token.deposited;
+    let n = this.props.token.staked;
     n = Math.floor(n / 10 ** 12) / 10 ** 6;
     this.setState({ toWithdraw: n });
   };
 
   onApprove = () => {
     const { w3, token, stakeContract } = this.props;
-    let b = token.depositable * 2;
+    let b = token.stakeable * 2;
     let uB = this.onConvert(b / 10 ** 18);
 
     token.contract.methods
@@ -103,10 +103,10 @@ export default class Pool extends Component {
   onClaim = () => {
     const { w3, token, stakeContract } = this.props;
     stakeContract.methods
-      .deposit(token.pid, 0)
+      .stake(0)
       .send({ from: w3.address })
       .then((res) => {
-        toast.success("Rewards claimed.");
+        toast.success("Claimed");
         token.rewards = null;
         this.setState({});
       })
@@ -137,7 +137,7 @@ export default class Pool extends Component {
             <div className="title">Statistics:</div>
             <Statistics
               t={`${token.unit} Deposited`}
-              v={`${convertToETH(token.deposited, this.props.token.unit)} ${
+              v={`${convertToETH(token.staked, this.props.token.unit)} ${
                 token.unit
               }`}
               isConnected={isConnected}
@@ -150,8 +150,8 @@ export default class Pool extends Component {
           </div>
           <div className="fields">
             <InputField
-              title={"Your wallet"}
-              current={convertToETH(token.depositable, this.props.token.unit)}
+              title={"Wallet Balance"}
+              current={convertToETH(token.stakeable, this.props.token.unit)}
               unit={token.unit}
               onMax={this.onMaxDeposit}
               onAction={this.onStakeExecute}
@@ -162,11 +162,11 @@ export default class Pool extends Component {
               isConnected={isConnected}
               isApproved={isApproved}
               isDeposit={true}
-              subtitle={"Deposit Fee: 2%"}
+              subtitle={""}
             />
             <InputField
-              title={"Staked in contract"}
-              current={convertToETH(token.deposited, this.props.token.unit)}
+              title={"Staked Amount"}
+              current={convertToETH(token.staked, this.props.token.unit)}
               unit={token.unit}
               onMax={this.onMaxWithdraw}
               onAction={this.onWithdrawExcecute}
@@ -175,11 +175,11 @@ export default class Pool extends Component {
               buttonTitle={"Withdraw"}
               isConnected={isConnected}
               isDeposit={false}
-              subtitle={"Withdraw and claim rewards"}
+              subtitle={""}
             />
           </div>
           <div className="claims">
-            <div className="title">Available rewards:</div>
+            <div className="title">Available Rewards:</div>
             <div className="value">{`${
               isConnected ? roundValue(token.rewards) : "-"
             } LOYAL`}</div>
