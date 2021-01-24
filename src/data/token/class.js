@@ -119,9 +119,11 @@ export default class Token {
       let rewardRate = await stakeContract.methods.rewardRate().call();
       let userStaked = await stakeContract.methods.balanceOf(w3.address).call();
       let totalStaked = await this.contract.methods.balanceOf(stakeAddress).call();
-	  let e = userStaked / totalStaked * rewardRate * 60 * 60 * 24;
-      this.estimated = e;
-      this.estimated = await w3.getWeiToETHString(Math.floor(e).toString());
+	  userStaked = await w3.getWeiToETH(userStaked);
+	  totalStaked = await w3.getWeiToETH(totalStaked);
+	  let e = new BigNumber(userStaked / totalStaked * rewardRate * 60 * 60 * 24);
+      this.estimated = e.toString(10);
+      //this.estimated = await w3.getWeiToETHString(Math.floor(e).toString());
     }
   }
 }
