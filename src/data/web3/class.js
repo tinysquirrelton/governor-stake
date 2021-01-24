@@ -14,6 +14,7 @@ export default class W3C {
     this.web3 = null;
     this.isConnected = false;
     this.address = null;
+    BigNumber.config({ DECIMAL_PLACES: 4 });
   }
 
   async getWeb3() {
