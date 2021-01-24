@@ -112,18 +112,19 @@ export default class Token {
       this.rewards = await w3.getWeiToETHString(b);
     }
   }
-
+  
   async getEstimatedDailyLOYAL(w3, stakeContract) {
     if (w3.isAddressValid()) {
-		
+    
       let rewardRate = await stakeContract.methods.rewardRate().call();
       let userStaked = await stakeContract.methods.balanceOf(w3.address).call();
       let totalStaked = await this.contract.methods.balanceOf(stakeAddress).call();
-	  userStaked = await w3.getWeiToETH(userStaked);
-	  totalStaked = await w3.getWeiToETH(totalStaked);
-	  let e = new BigNumber(userStaked / totalStaked * rewardRate * 60 * 60 * 24);
+      userStaked = await w3.getWeiToETH(userStaked);
+      totalStaked = await w3.getWeiToETH(totalStaked);
+      rewardRate = await w3.getWeiToETH(rewardRate);
+      let e = new BigNumber(userStaked / totalStaked * rewardRate * 60 * 60 * 24);
       this.estimated = e.toString(10);
-      //this.estimated = await w3.getWeiToETHString(Math.floor(e).toString());
     }
   }
+  
 }
