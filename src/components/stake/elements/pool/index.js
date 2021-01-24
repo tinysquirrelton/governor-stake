@@ -84,7 +84,7 @@ export default class Pool extends Component {
   };
 
   onWithdrawExcecute = () => {
-    const { w3, token, stakeContract } = this.props;
+    const { w3, /*token,*/ stakeContract } = this.props;
     const tW = this.state.toWithdraw;
     let w = this.onConvert(tW);
 
@@ -94,7 +94,7 @@ export default class Pool extends Component {
       .then((res) => {
         toast.success("Successfully Withdrawn.");
         toast.success("Successfully Claimed.");
-        token.rewards = null;
+        //token.rewards = null;
 
         this.setState(() => ({
           toWithdraw: 0.0,
