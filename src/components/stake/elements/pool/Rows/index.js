@@ -39,7 +39,7 @@ const Row = (props) => {
       />
        }
     </div>
-    //</div>
+    </div>
   );
 };
 
