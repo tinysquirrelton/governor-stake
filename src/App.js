@@ -126,19 +126,14 @@ export default class App extends Component {
 
   setChanged = async (changeType) => {
     if (changeType === "DISCONNECTED") {
-      this.tokens.forEach((token) => {
-        token.stakeable = null;
-        token.staked = null;
-        token.rewards = null;
-      });
+        this.token.stakeable = null;
+        this.token.staked = null;
+        this.token.rewards = null;
       this.setState({ isConnected: false });
     } else if (changeType === "CHANGED_ACCOUNT") {
-      const tasks = this.tokens.map(async (token) => {
-        await token.getStakeable(this.w3);
-        await token.getStaked(this.w3, this.stakeContract);
-        await token.getPendingLOYAL(this.w3, this.stakeContract);
-      });
-      await Promise.all(tasks);
+        await this.token.getStakeable(this.w3);
+        await this.token.getStaked(this.w3, this.stakeContract);
+        await this.token.getPendingLOYAL(this.w3, this.stakeContract);
       this.setState({ isConnected: true });
     }
   };
@@ -157,7 +152,7 @@ export default class App extends Component {
         <Routes
           w3={this.w3}
           token={this.token}
-          circulatingSupply={this.circulatingSupply}
+          loyalLeft={this.loyalLeft}
           stakeContract={this.stakeContract}
           isConnected={this.state.isConnected}
           isSmall={this.state.isSmall}
