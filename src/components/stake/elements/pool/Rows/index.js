@@ -1,6 +1,6 @@
 import React from "react";
 import { RowItem } from "../RowItem";
-import { roundValue/*, convertToETH */} from "../../../../../utilities/helpers";	
+import { roundValue, convertToETH } from "../../../../../utilities/helpers";	
 import "./style.scss";
 
 const Row = (props) => {
@@ -38,7 +38,6 @@ const Row = (props) => {
         isConnected={isConnected}
       />
        
-    </div>
     </div>
   );
 };
