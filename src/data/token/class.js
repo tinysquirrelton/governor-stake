@@ -43,7 +43,7 @@ export default class Token {
       let p = wB / xB; // Price in ETH
 	  
       if (testnet) {
-	    if(x == 0) {
+	    if(x === 0) {
 		  p = 0.00023927;
 	    }
         this.price = p * 1250;
