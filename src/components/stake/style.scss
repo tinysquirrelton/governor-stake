@@ -89,20 +89,13 @@ button[disabled] {
     }
   }
   & .nft-card-container {
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
     position: relative;
 
-    img {
-      max-height: 250px;
-      margin: auto;
-      display: inline-block;
-      object-fit: cover;
-    }
     h1,
-    h2,
-    h3,
-    h4,
-    h5 {
+    h3 {
       margin: 0;
       font-weight: 400;
     }
@@ -117,7 +110,15 @@ button[disabled] {
       background: #ddd;
       text-align: left;
       box-shadow: $shadow-regular-light;
-
+      @include lg {
+        margin: 25px 50px;
+      }
+      @include rwd(1450) {
+        margin: 25px 75px;
+      }
+      @include rwd(1600) {
+        margin: 25px auto;
+      }
       &__caption {
         background-color: rgba(#ffffff, 0.65);
         padding: 1em;
@@ -129,6 +130,12 @@ button[disabled] {
         text-align: center;
         padding: 1em 1em 0;
         border-radius: 3px 3px 0 0;
+        img {
+          max-height: 250px;
+          margin: auto;
+          display: inline-block;
+          object-fit: cover;
+        }
       }
       &__type {
         position: absolute;
@@ -144,39 +151,11 @@ button[disabled] {
         border-radius: 2px;
         background: #bbbbbb;
       }
-      &__label {
-        font-size: 10px;
-        text-transform: uppercase;
-        font-weight: 400;
-        display: block;
-        margin-bottom: 3px;
-      }
       &__name {
         text-align: center;
         font-size: 1.5em;
         font-weight: 700;
         letter-spacing: 0.02em;
-      }
-      &__stats {
-        margin: 1em 0;
-        width: 100%;
-        th {
-          text-align: right;
-          font-weight: 300;
-        }
-        th,
-        td {
-          width: 50%;
-          padding: 0.25em 0.5em 0;
-        }
-      }
-      &__abilities {
-        display: flex;
-        justify-content: space-between;
-      }
-      &__ability {
-        margin-top: 1em;
-        flex: 1 0;
       }
       &--dark {
         background: linear-gradient(120deg, #34255c 0%, #2d1d69 100%);
