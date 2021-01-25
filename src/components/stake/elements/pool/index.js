@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import Box from "./Boxes";
 import Row from "./Rows";
 import { InputField } from "./inputField";
-// import { Statistics } from "./Statistics";
+import { Statistics } from "./Statistics";
 import { roundValue, convertToETH } from "../../../../utilities/helpers";
 
 export default class Pool extends Component {
@@ -84,7 +84,7 @@ export default class Pool extends Component {
   };
 
   onWithdrawExcecute = () => {
-    const { w3, /*token,*/ stakeContract } = this.props;
+    const { w3, token, stakeContract } = this.props;
     const tW = this.state.toWithdraw;
     let w = this.onConvert(tW);
 
@@ -94,7 +94,7 @@ export default class Pool extends Component {
       .then((res) => {
         toast.success("Successfully Withdrawn.");
         toast.success("Successfully Claimed.");
-        //token.rewards = null;
+        token.rewards = null;
 
         this.setState(() => ({
           toWithdraw: 0.0,
@@ -137,7 +137,7 @@ export default class Pool extends Component {
           <Row token={token} isConnected={isConnected} />
         )}
         <div className="expanded">
-          {/*<div className="statistics">
+          <div className="statistics">
             <div className="title">Statistics:</div>
             <Statistics
               t={`${token.unit} Staked`}
@@ -151,7 +151,7 @@ export default class Pool extends Component {
               v={`${roundValue(token.rewards)} LOYAL`}
               isConnected={isConnected}
             />
-          </div> */}
+          </div>
           <div className="fields">
             <InputField
               title={"Wallet Balance"}
