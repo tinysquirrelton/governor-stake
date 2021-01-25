@@ -13,10 +13,7 @@ import {
   USDCAddress,
   stakeAddress,
   GDAOAddress, // stakingToken
-  AirdropAddress,
-  MinesAddress,
-  AirdropRewardAddresss,
-  BurnPurgatoryAddress,
+  LOYALAddress,
   testnet,
 } from "./utilities/constants/constants";
 
@@ -31,6 +28,7 @@ export default class App extends Component {
     this.usdcContract = null;
     this.stakeContract = null;
     this.circulatingSupply = 0;
+	this.loyalLeft = 0;
     this.state = { isConnected: false };
   }
 
@@ -47,11 +45,13 @@ export default class App extends Component {
       this.wethContract = this.getContract(this.w3, wETHAddress);
       this.usdcContract = this.getContract(this.w3, USDCAddress);
       this.gdaoContract = this.getContract(this.w3, GDAOAddress);
+      this.loyalContract = this.getContract(this.w3, LOYALAddress);
       this.stakeContract = this.getContractStake(this.w3, stakeAddress);
       // Init Token Contracts if Mainnet or Test-mode enabled
       chainId = await this.w3.web3.eth.getChainId();
       // Calculate circulating supply
-      this.circulatingSupply = this.getCirculatingSupply();
+      await this.getLoyalLeft();
+	  console.log(this.loyalLeft);
     }
 
     if (
@@ -113,6 +113,14 @@ export default class App extends Component {
       (await this.gdaoContract.methods.totalSupply().call()) / 10 ** 18;
     this.circulatingSupply = Number(
       (totalSupply).toFixed(0)
+    ).toLocaleString();
+  };
+
+  getLoyalLeft = async () => {
+	let loyalInPool =
+      (await this.loyalContract.methods.balanceOf(stakeAddress).call()) / 10 ** 18;
+    this.loyalLeft = Number(
+      (loyalInPool).toFixed(0)
     ).toLocaleString();
   };
 

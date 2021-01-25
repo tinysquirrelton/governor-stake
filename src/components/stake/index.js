@@ -22,8 +22,8 @@ export default class Stake extends Component {
             }`}
           </div>
           <div className="stake-subtitle">
-            <span>Circulating Supply:</span>
-            {` ${this.props.circulatingSupply}`}
+            <span>LOYAL left in pool:</span>
+            {` ${this.props.loyalLeft}`}
           </div>
           <div className="stake-subtitle">
             <a
