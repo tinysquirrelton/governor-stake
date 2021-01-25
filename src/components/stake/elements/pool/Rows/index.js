@@ -23,14 +23,14 @@ const Row = (props) => {
         s={`${roundValue(token.estimated)} LOYAL`}
         isConnected={isConnected}
       />
-      {/*	
+
       <RowItem
         c={"row-tvl"}
         t={"TVL"}
         s={`$${roundValue(token.tvl)}`}
         isConnected={isConnected}
       />
-    */}
+
       <RowItem
         c={"row-stake"}
         t={"Available"}
