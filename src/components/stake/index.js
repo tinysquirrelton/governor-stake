@@ -27,7 +27,7 @@ export default class Stake extends Component {
           </div>
           <div className="stake-subtitle">
             <a
-              href="https://rinkeby.etherscan.io/address/0x20bea2175d59f1c59ba0d76e934e296b26d8e003#code"
+              href="https://etherscan.io/address/0xda58927f4065f1d02a6ea850c2aac49d7362a643#code"
               rel="noreferrer"
               target="_blank"
               style={{
