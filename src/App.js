@@ -27,7 +27,6 @@ export default class App extends Component {
     this.wethContract = null;
     this.usdcContract = null;
     this.stakeContract = null;
-    this.circulatingSupply = 0;
 	this.loyalLeft = 0;
     this.state = { isConnected: false };
   }
@@ -49,9 +48,7 @@ export default class App extends Component {
       this.stakeContract = this.getContractStake(this.w3, stakeAddress);
       // Init Token Contracts if Mainnet or Test-mode enabled
       chainId = await this.w3.web3.eth.getChainId();
-      // Calculate circulating supply
       await this.getLoyalLeft();
-	  console.log(this.loyalLeft);
     }
 
     if (
@@ -81,39 +78,6 @@ export default class App extends Component {
 
   getContractStake = (w3, address) => {
     return new w3.web3.eth.Contract(StakeABI.abi, address);
-  };
-
-  getCirculatingSupply = async () => {
-    /*let totalSupply =
-      (await this.gdaoContract.methods.totalSupply().call()) / 10 ** 18;
-    let airdropUnclaimed =
-      (await this.gdaoContract.methods.balanceOf(AirdropAddress).call()) /
-      10 ** 18;
-    let minesBalance =
-      (await this.gdaoContract.methods.balanceOf(MinesAddress).call()) /
-      10 ** 18;
-    let airdropRewardBalance =
-      (await this.gdaoContract.methods
-        .balanceOf(AirdropRewardAddresss)
-        .call()) /
-      10 ** 18;
-    let burnPurgatoryBalance =
-      (await this.gdaoContract.methods.balanceOf(BurnPurgatoryAddress).call()) /
-      10 ** 18;
-    this.circulatingSupply = Number(
-      (
-        totalSupply -
-        airdropUnclaimed -
-        minesBalance -
-        airdropRewardBalance -
-        burnPurgatoryBalance
-      ).toFixed(0)
-    ).toLocaleString();*/
-	let totalSupply =
-      (await this.gdaoContract.methods.totalSupply().call()) / 10 ** 18;
-    this.circulatingSupply = Number(
-      (totalSupply).toFixed(0)
-    ).toLocaleString();
   };
 
   getLoyalLeft = async () => {
