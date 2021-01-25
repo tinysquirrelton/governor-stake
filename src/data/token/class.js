@@ -21,8 +21,8 @@ export default class Token {
     this.price = null;
     this.tvl = null;
     // Values below will be nullified on account change/disconnect
-    this.depositable = null;
-    this.deposited = null;
+    this.stakeable = null;
+    this.staked = null;
     this.rewards = null;
     this.estimated = null;
   }
@@ -43,7 +43,7 @@ export default class Token {
       let p = wB / xB; // Price in ETH
 	  
       if (testnet) {
-	    if(x == 0) {
+	    if(parseInt(x) === 0) {
 		  p = 0.00023927;
 	    }
         this.price = p * 1250;
@@ -92,30 +92,31 @@ export default class Token {
     }
   }
 
-  async getDepositable(w3) {
+  async getStakeable(w3) {
     if (w3.isAddressValid() && w3.isAddressValid(this.address)) {
       let b = await this.contract.methods.balanceOf(w3.address).call();
-      this.depositable = b;
+      this.stakeable = b;
     }
   }
 
-  async getDeposited(w3, stakeContract) {
+  async getStaked(w3, stakeContract) {
     if (w3.isAddressValid()) {
       let b = await stakeContract.methods.balanceOf(w3.address).call();
-      this.deposited = b;
+      this.staked = b;
     }
   }
 
   async getPendingLOYAL(w3, stakeContract) {
     if (w3.isAddressValid()) {
-      let b = await stakeContract.methods.earned(w3.address).call();
+      let b = await stakeContract.methods
+      .earned(w3.address)
+      .call();
       this.rewards = await w3.getWeiToETHString(b);
     }
   }
-  
+
   async getEstimatedDailyLOYAL(w3, stakeContract) {
     if (w3.isAddressValid()) {
-    
       let rewardRate = await stakeContract.methods.rewardRate().call();
       let userStaked = await stakeContract.methods.balanceOf(w3.address).call();
       let totalStaked = await this.contract.methods.balanceOf(stakeAddress).call();
@@ -123,8 +124,11 @@ export default class Token {
       totalStaked = await w3.getWeiToETH(totalStaked);
       rewardRate = await w3.getWeiToETH(rewardRate);
       let e = new BigNumber(userStaked / totalStaked * rewardRate * 60 * 60 * 24);
-      this.estimated = e.toString(10);
+	  if(parseInt(totalStaked) === 0) {
+		this.estimated = 0;
+	  } else {
+		this.estimated = e.toString(10);
+	  }
     }
   }
-  
 }

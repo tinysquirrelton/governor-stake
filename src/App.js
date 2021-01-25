@@ -12,7 +12,7 @@ import {
   wETHAddress,
   USDCAddress,
   stakeAddress,
-  GDAOAddress,
+  GDAOAddress, // stakingToken
   AirdropAddress,
   MinesAddress,
   AirdropRewardAddresss,
@@ -62,8 +62,8 @@ export default class App extends Component {
       await this.token.getPrice(this.w3, this.wethContract, this.usdcContract);
       await this.token.getTVL(this.w3);
       if (isConnected && this.stakeContract !== null) {
-        await this.token.getDepositable(this.w3);
-        await this.token.getDeposited(this.w3, this.stakeContract);
+        await this.token.getStakeable(this.w3);
+        await this.token.getStaked(this.w3, this.stakeContract);
         await this.token.getPendingLOYAL(this.w3, this.stakeContract);
         await this.token.getEstimatedDailyLOYAL(this.w3, this.stakeContract);
       }
@@ -84,7 +84,7 @@ export default class App extends Component {
   };
 
   getCirculatingSupply = async () => {
-    let totalSupply =
+    /*let totalSupply =
       (await this.gdaoContract.methods.totalSupply().call()) / 10 ** 18;
     let airdropUnclaimed =
       (await this.gdaoContract.methods.balanceOf(AirdropAddress).call()) /
@@ -108,21 +108,26 @@ export default class App extends Component {
         airdropRewardBalance -
         burnPurgatoryBalance
       ).toFixed(0)
+    ).toLocaleString();*/
+	let totalSupply =
+      (await this.gdaoContract.methods.totalSupply().call()) / 10 ** 18;
+    this.circulatingSupply = Number(
+      (totalSupply).toFixed(0)
     ).toLocaleString();
   };
 
   setChanged = async (changeType) => {
     if (changeType === "DISCONNECTED") {
       this.tokens.forEach((token) => {
-        token.depositable = null;
-        token.deposited = null;
+        token.stakeable = null;
+        token.staked = null;
         token.rewards = null;
       });
       this.setState({ isConnected: false });
     } else if (changeType === "CHANGED_ACCOUNT") {
       const tasks = this.tokens.map(async (token) => {
-        await token.getDepositable(this.w3);
-        await token.getDeposited(this.w3, this.stakeContract);
+        await token.getStakeable(this.w3);
+        await token.getStaked(this.w3, this.stakeContract);
         await token.getPendingLOYAL(this.w3, this.stakeContract);
       });
       await Promise.all(tasks);

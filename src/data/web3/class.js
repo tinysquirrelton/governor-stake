@@ -1,3 +1,4 @@
+
 import Web3 from "web3";
 import { toast } from "react-toastify";
 import BigNumber from "bignumber.js/bignumber";
@@ -13,7 +14,7 @@ export default class W3C {
     this.web3 = null;
     this.isConnected = false;
     this.address = null;
-	BigNumber.config({ DECIMAL_PLACES: 4 });
+    BigNumber.config({ DECIMAL_PLACES: 4 });
   }
 
   async getWeb3() {

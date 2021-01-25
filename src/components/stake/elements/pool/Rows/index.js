@@ -17,25 +17,14 @@ const Row = (props) => {
         t={token.name}
         s={token.text}
         isConnected={true}
-      />
+      /> 
       <RowItem
         c={"row-apy"}
-        t={"Daily reward forecast"}
+        t={"Daily Rewards"}
         s={`${roundValue(token.estimated)} LOYAL`}
         isConnected={isConnected}
       />
-      <RowItem
-        c={"row-tvl"}
-        t={"TVL"}
-        s={`$${roundValue(token.tvl)}`}
-        isConnected={isConnected}
-      />
-      <RowItem
-        c={"row-deposit"}
-        t={"Available to deposit"}
-        s={convertToETH(token.depositable, token.unit)}
-        isConnected={isConnected}
-      />
+       
     </div>
   );
 };
