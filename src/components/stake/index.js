@@ -44,6 +44,7 @@ export default class Stake extends Component {
             <a
               href="https://gdao.network/t/loyalty-points-for-gdao-staking/79"
               target="_blank"
+              rel="noreferrer"
             >
               Learn about LOYAL and GDAO staking
             </a>
