@@ -57,7 +57,7 @@ export default class Stake extends Component {
               </div>
               <figcaption class="card__caption">
                 <h1 class="card__name">?</h1>
-                <h3 class="card__type">Coming soon</h3>
+                <h3 class="card__type">Coming Soon</h3>
               </figcaption>
             </figure>
             <figure class="card card--dark">
@@ -70,7 +70,7 @@ export default class Stake extends Component {
               </div>
               <figcaption class="card__caption">
                 <h1 class="card__name">?</h1>
-                <h3 class="card__type">Coming soon</h3>
+                <h3 class="card__type">Coming Soon</h3>
               </figcaption>
             </figure>
             <figure class="card card--dark">
@@ -83,7 +83,7 @@ export default class Stake extends Component {
               </div>
               <figcaption class="card__caption">
                 <h1 class="card__name">?</h1>
-                <h3 class="card__type">Coming soon</h3>
+                <h3 class="card__type">Coming Soon</h3>
               </figcaption>
             </figure>
             <figure class="card card--dark">
@@ -96,7 +96,7 @@ export default class Stake extends Component {
               </div>
               <figcaption class="card__caption">
                 <h1 class="card__name">?</h1>
-                <h3 class="card__type">Coming soon</h3>
+                <h3 class="card__type">Coming Soon</h3>
               </figcaption>
             </figure>
           </div>
