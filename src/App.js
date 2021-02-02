@@ -81,10 +81,18 @@ export default class App extends Component {
   };
 
   getLoyalLeft = async () => {
-	let loyalInPool =
-      (await this.loyalContract.methods.balanceOf(stakeAddress).call()) / 10 ** 18;
+	//let loyalInPool = (await this.loyalContract.methods.balanceOf(stakeAddress).call()) / 10 ** 18;
+	let rewardRate = await this.stakeContract.methods.rewardRate().call();
+	rewardRate = await this.w3.getWeiToETH(rewardRate);
+	let loyalInPool = (await this.loyalContract.methods.totalSupply().call()) / 10 ** 18;
+	loyalInPool -= (await this.stakeContract.methods.accruedRewardPerToken().call()) / 10 ** 18 * (await this.gdaoContract.methods.balanceOf(stakeAddress).call()) / 10 ** 18;
+	loyalInPool -= rewardRate * 111379; // 111379s between pause() and unpause()
+	
+	if(loyalInPool < 0) {
+		loyalInPool = 0;	
+	}
     this.loyalLeft = Number(
-      (loyalInPool).toFixed(0)
+      (loyalInPool).toFixed(2)
     ).toLocaleString();
   };
 
