@@ -12,8 +12,10 @@ export const InputField = ({
   buttonTitle,
   isConnected,
   isApproved,
+  valueApproved,
   isStake,
   subtitle,
+  subtitleForceNormalStyle,
 }) => (
   <form onSubmit={(e) => e.preventDefault()} className="input-field">
     <div className="input-label">
@@ -34,13 +36,13 @@ export const InputField = ({
         />
       </div>
     </div>
-    {subtitle !== null && <div className={isStake ? "input-subtitle attention" : "input-subtitle"}>{subtitle}</div>}
+    {subtitle !== null && <div className={isStake && subtitleForceNormalStyle ? "input-subtitle attention" : "input-subtitle"}>{subtitle}</div>}
     <div className="button-box">
       <button className={isStake ? "action-btn" : "hide"} onClick={onAction1}>Approve</button>
       <button
         className="action-btn"
         onClick={onAction}
-        disabled={!isConnected}
+        disabled={!isConnected || valueApproved <= 0}
       >{`${buttonTitle} ${unit}`}</button>
     </div>
   </form>

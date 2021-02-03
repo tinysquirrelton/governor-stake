@@ -25,6 +25,7 @@ export default class Token {
     this.staked = null;
     this.rewards = null;
     this.estimated = null;
+    this.approved = 0;
   }
 
   async getContract(w3) {
@@ -129,6 +130,14 @@ export default class Token {
 	  } else {
 		this.estimated = e.toString(10);
 	  }
+    }
+  }
+
+  async getApprovedAmount(w3, stakeAddress) {
+    if (w3.isAddressValid()) {
+	  let GDAOContract = await new w3.web3.eth.Contract(ERC20.abi, GDAOAddress);
+	  let allowance = await GDAOContract.methods.allowance(w3.address, stakeAddress).call();
+	  this.approved = allowance;
     }
   }
 }
