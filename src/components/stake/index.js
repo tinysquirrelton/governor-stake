@@ -40,6 +40,15 @@ export default class Stake extends Component {
               Stake Contract
             </a>
           </div>
+          <div className="learn-loyal">
+            <a
+              href="https://gdao.network/t/loyalty-points-for-gdao-staking/79"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Learn about LOYAL and GDAO staking
+            </a>
+          </div>
           <Pool token={this.props.token} {...this.props} />
         </div>
         <div className="nft-container">
@@ -47,56 +56,56 @@ export default class Stake extends Component {
           <div className="nft-subtitle">Coming Soon</div>
 
           <div className="nft-card-container">
-            <figure class="card card--dark">
-              <div class="card__image-container">
+            <figure className="card card--dark">
+              <div className="card__image-container">
                 <img
                   src="https://media.giphy.com/media/26BRqPg05olzXG1bi/giphy.gif"
                   alt="Eevee"
-                  class="card__image"
+                  className="card__image"
                 />
               </div>
-              <figcaption class="card__caption">
-                <h1 class="card__name">?</h1>
-                <h3 class="card__type">Coming soon</h3>
+              <figcaption className="card__caption">
+                <h1 className="card__name">?</h1>
+                <h3 className="card__type">Coming soon</h3>
               </figcaption>
             </figure>
-            <figure class="card card--dark">
-              <div class="card__image-container">
+            <figure className="card card--dark">
+              <div className="card__image-container">
                 <img
                   src="https://media.giphy.com/media/26BRqPg05olzXG1bi/giphy.gif"
                   alt="Eevee"
-                  class="card__image"
+                  className="card__image"
                 />
               </div>
-              <figcaption class="card__caption">
-                <h1 class="card__name">?</h1>
-                <h3 class="card__type">Coming soon</h3>
+              <figcaption className="card__caption">
+                <h1 className="card__name">?</h1>
+                <h3 className="card__type">Coming soon</h3>
               </figcaption>
             </figure>
-            <figure class="card card--dark">
-              <div class="card__image-container">
+            <figure className="card card--dark">
+              <div className="card__image-container">
                 <img
                   src="https://media.giphy.com/media/26BRqPg05olzXG1bi/giphy.gif"
                   alt="Eevee"
-                  class="card__image"
+                  className="card__image"
                 />
               </div>
-              <figcaption class="card__caption">
-                <h1 class="card__name">?</h1>
-                <h3 class="card__type">Coming soon</h3>
+              <figcaption className="card__caption">
+                <h1 className="card__name">?</h1>
+                <h3 className="card__type">Coming soon</h3>
               </figcaption>
             </figure>
-            <figure class="card card--dark">
-              <div class="card__image-container">
+            <figure className="card card--dark">
+              <div className="card__image-container">
                 <img
                   src="https://media.giphy.com/media/26BRqPg05olzXG1bi/giphy.gif"
                   alt="Eevee"
-                  class="card__image"
+                  className="card__image"
                 />
               </div>
-              <figcaption class="card__caption">
-                <h1 class="card__name">?</h1>
-                <h3 class="card__type">Coming soon</h3>
+              <figcaption className="card__caption">
+                <h1 className="card__name">?</h1>
+                <h3 className="card__type">Coming soon</h3>
               </figcaption>
             </figure>
           </div>
