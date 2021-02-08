@@ -39,17 +39,21 @@ export const InputField = ({
     </div>
     {subtitle !== null && (
       <div
-        className={
+        className={`${
           isStake && subtitleForceNormalStyle
             ? "input-subtitle attention"
             : "input-subtitle"
-        }
+        }${!isStake ? " space" : ""}`}
       >
         {subtitle}
       </div>
     )}
     <div className="button-box">
-      <button className={isStake ? "action-btn" : "hide"} onClick={onAction1}>
+      <button
+        className={isStake ? "action-btn" : "hide"}
+        onClick={onAction1}
+        disabled={!isConnected}
+      >
         Approve
       </button>
       <button
@@ -57,7 +61,7 @@ export const InputField = ({
         onClick={onAction}
         disabled={
           !isConnected ||
-          (buttonTitle === "Stake" &&
+          (isStake &&
             (BigNumber(valueApproved).toNumber() <= 0 ||
               !valueApproved ||
               BigNumber(valueApproved).toNumber() <
