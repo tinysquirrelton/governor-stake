@@ -110,7 +110,6 @@
     }
     & .fields {
       display: flex;
-      align-items: center;
       justify-content: space-between;
       padding: 30px 104px;
 
@@ -131,6 +130,11 @@
           display: block;
           font-size: 12px;
           margin: 6px 0;
+          @include md {
+            &.space {
+              margin: 28px 0;
+            }
+          }
         }
         & .input-container {
           display: flex;
