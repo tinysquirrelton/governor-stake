@@ -61,7 +61,8 @@ export const InputField = ({
           !isConnected ||
           BigNumber(valueApproved).toNumber() <= 0 ||
           !valueApproved ||
-          BigNumber(valueApproved).toNumber() < BigNumber(value).toNumber()
+          BigNumber(valueApproved).toNumber() <
+            BigNumber(value * 10 ** 18).toNumber()
         }
       >{`${buttonTitle} ${unit}`}</button>
     </div>
