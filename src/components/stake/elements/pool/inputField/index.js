@@ -47,6 +47,8 @@ export const InputField = ({
         {subtitle}
       </div>
     )}
+    {console.log(value, "value")}
+    {console.log(valueApproved, "approved")}
     <div className="button-box">
       <button className={isStake ? "action-btn" : "hide"} onClick={onAction1}>
         Approve
