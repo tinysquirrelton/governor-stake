@@ -59,6 +59,7 @@ export default class Pool extends Component {
       .send({ from: w3.address })
       .then((res) => {
         if (res.status === true) {
+		  token.getApprovedAmount(w3, token.stakeAddress);
           toast.success("Successfully Approved.");
           this.setState({ isApproved: true });
         }
@@ -166,7 +167,9 @@ export default class Pool extends Component {
               isConnected={isConnected}
               isApproved={isApproved}
               isStake={true}
-              subtitle={""}
+              valueApproved={token.approved}
+              subtitle={"Approved: " + this.props.w3.web3.utils.fromWei(token.approved.toString())}
+			  subtitleAltStyle={true}
             />
             <InputField
               title={"Staked Amount"}
