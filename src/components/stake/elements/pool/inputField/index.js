@@ -48,8 +48,6 @@ export const InputField = ({
         {subtitle}
       </div>
     )}
-    {console.log(value, "value")}
-    {console.log(valueApproved, "approved")}
     <div className="button-box">
       <button className={isStake ? "action-btn" : "hide"} onClick={onAction1}>
         Approve
@@ -59,10 +57,11 @@ export const InputField = ({
         onClick={onAction}
         disabled={
           !isConnected ||
-          BigNumber(valueApproved).toNumber() <= 0 ||
-          !valueApproved ||
-          BigNumber(valueApproved).toNumber() <
-            BigNumber(value * 10 ** 18).toNumber()
+          (buttonTitle === "Stake" &&
+            (BigNumber(valueApproved).toNumber() <= 0 ||
+              !valueApproved ||
+              BigNumber(valueApproved).toNumber() <
+                BigNumber(value * 10 ** 18).toNumber()))
         }
       >{`${buttonTitle} ${unit}`}</button>
     </div>
