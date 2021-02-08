@@ -1,4 +1,5 @@
 import React from "react";
+import BigNumber from "bignumber.js/bignumber";
 
 export const InputField = ({
   title,
@@ -47,6 +48,8 @@ export const InputField = ({
         {subtitle}
       </div>
     )}
+    {console.log(value, "value")}
+    {console.log(valueApproved, "approved")}
     <div className="button-box">
       <button className={isStake ? "action-btn" : "hide"} onClick={onAction1}>
         Approve
@@ -54,7 +57,12 @@ export const InputField = ({
       <button
         className="action-btn"
         onClick={onAction}
-        disabled={!isConnected || valueApproved <= 0 || value > valueApproved}
+        disabled={
+          !isConnected ||
+          BigNumber(valueApproved).toNumber() <= 0 ||
+          !valueApproved ||
+          BigNumber(valueApproved).toNumber() < BigNumber(value).toNumber()
+        }
       >{`${buttonTitle} ${unit}`}</button>
     </div>
   </form>
