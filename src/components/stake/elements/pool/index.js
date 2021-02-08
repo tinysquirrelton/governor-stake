@@ -169,8 +169,9 @@ export default class Pool extends Component {
               isStake={true}
               valueApproved={token.approved}
               subtitle={
-                "Approved: " +
-                this.props.w3.web3.utils.fromWei(token.approved.toString())
+                "Approved: " + this.props.w3?.web3?.utils
+                  ? this.props.w3.web3.utils.fromWei(token.approved.toString())
+                  : 0
               }
               subtitleAltStyle={true}
             />
