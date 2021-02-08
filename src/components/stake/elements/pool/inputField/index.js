@@ -57,10 +57,11 @@ export const InputField = ({
         onClick={onAction}
         disabled={
           !isConnected ||
-          BigNumber(valueApproved).toNumber() <= 0 ||
-          !valueApproved ||
-          BigNumber(valueApproved).toNumber() <
-            BigNumber(value * 10 ** 18).toNumber()
+          (buttonTitle === "Stake" &&
+            (BigNumber(valueApproved).toNumber() <= 0 ||
+              !valueApproved ||
+              BigNumber(valueApproved).toNumber() <
+                BigNumber(value * 10 ** 18).toNumber()))
         }
       >{`${buttonTitle} ${unit}`}</button>
     </div>
