@@ -130,6 +130,11 @@ export default class Pool extends Component {
     const { token, isConnected } = this.props;
     const { toStake, toWithdraw, isApproved } = this.state;
 
+    const approved = this.props.w3?.web3?.utils.fromWei(
+      token.approved.toString()
+    );
+    const currApproved = approved !== undefined ? approved : "-";
+
     return (
       <div className={`stake-${this.state.isSmall ? "box" : "row"}-container`}>
         {this.state.isSmall ? (
@@ -168,10 +173,7 @@ export default class Pool extends Component {
               isApproved={isApproved}
               isStake={true}
               valueApproved={token.approved}
-              subtitle={
-                "Approved: " +
-                this.props.w3?.web3?.utils.fromWei(token.approved.toString())
-              }
+              subtitle={"Approved: " + currApproved}
               subtitleAltStyle={true}
             />
             <InputField

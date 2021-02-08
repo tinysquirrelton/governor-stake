@@ -208,6 +208,15 @@
 .button-box {
   display: flex;
   flex-wrap: wrap;
+  & .action-btn {
+    height: 40px;
+    &:nth-of-type(1) {
+      margin-bottom: 10px !important;
+      @include md {
+        margin-bottom: unset;
+      }
+    }
+  }
 }
 
 .attention {
