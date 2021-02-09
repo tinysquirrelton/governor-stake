@@ -33,7 +33,9 @@ export const InputField = ({
           value={value}
           step={0.001}
           onChange={onChange}
-          disabled={!isConnected}
+          disabled={
+            !isConnected || value === 0 || value === null || value === undefined
+          }
         />
       </div>
     </div>
@@ -61,6 +63,9 @@ export const InputField = ({
         onClick={onAction}
         disabled={
           !isConnected ||
+          value === 0 ||
+          value === null ||
+          value === undefined ||
           (isStake &&
             (BigNumber(valueApproved).toNumber() <= 0 ||
               !valueApproved ||
