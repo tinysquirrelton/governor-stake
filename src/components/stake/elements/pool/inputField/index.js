@@ -34,6 +34,7 @@ export const InputField = ({
           step={0.001}
           onChange={onChange}
           disabled={!isConnected}
+          min="0"
         />
       </div>
     </div>
@@ -69,6 +70,7 @@ export const InputField = ({
           !isConnected ||
           value === 0 ||
           value === "0" ||
+          value === "" ||
           value === null ||
           value === undefined ||
           (isStake &&
@@ -78,7 +80,6 @@ export const InputField = ({
                 BigNumber(value * 10 ** 18).toNumber()))
         }
       >{`${buttonTitle} ${unit}`}</button>
-      {console.log(typeof value)}
     </div>
   </form>
 );
