@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
+import BigNumber from "bignumber.js/bignumber";
+
 import Box from "./Boxes";
 import Row from "./Rows";
 import { InputField } from "./inputField";
@@ -119,11 +121,31 @@ export default class Pool extends Component {
   };
 
   onStakeChange = (e) => {
-    this.setState({ toStake: e.target.value });
+    let stakable = BigNumber(
+      convertToETH(this.props.token.stakeable, this.props.token.unit)
+    ).toNumber();
+
+    let toStake =
+      BigNumber(e.target.value).toNumber() > stakable
+        ? stakable
+        : BigNumber(e.target.value).toNumber();
+
+    this.setState({
+      toStake: isNaN(toStake) ? "" : toStake,
+    });
   };
 
   onWithdrawChange = (e) => {
-    this.setState({ toWithdraw: e.target.value });
+    let staked = BigNumber(
+      convertToETH(this.props.token.staked, this.props.token.unit)
+    ).toNumber();
+
+    let toWithdraw =
+      BigNumber(e.target.value).toNumber() > staked
+        ? staked
+        : BigNumber(e.target.value).toNumber();
+
+    this.setState({ toWithdraw: isNaN(toWithdraw) ? "" : toWithdraw });
   };
 
   render() {
@@ -147,9 +169,7 @@ export default class Pool extends Component {
             <div className="title">Statistics:</div>
             <Statistics
               t={`${token.unit} Staked`}
-              v={`${convertToETH(token.staked, this.props.token.unit)} ${
-                token.unit
-              }`}
+              v={`${convertToETH(token.staked, token.unit)} ${token.unit}`}
               isConnected={isConnected}
             />
             <Statistics
@@ -161,7 +181,7 @@ export default class Pool extends Component {
           <div className="fields">
             <InputField
               title={"Wallet Balance"}
-              current={convertToETH(token.stakeable, this.props.token.unit)}
+              current={convertToETH(token.stakeable, token.unit)}
               unit={token.unit}
               onMax={this.onMaxStake}
               onAction={this.onStakeExecute}
@@ -178,7 +198,7 @@ export default class Pool extends Component {
             />
             <InputField
               title={"Staked Amount"}
-              current={convertToETH(token.staked, this.props.token.unit)}
+              current={convertToETH(token.staked, token.unit)}
               unit={token.unit}
               onMax={this.onMaxWithdraw}
               onAction={this.onWithdrawExcecute}
