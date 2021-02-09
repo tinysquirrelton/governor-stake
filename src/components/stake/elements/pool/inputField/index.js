@@ -52,7 +52,13 @@ export const InputField = ({
       <button
         className={isStake ? "action-btn" : "hide"}
         onClick={onAction1}
-        disabled={!isConnected}
+        disabled={
+          !isConnected ||
+          (isStake &&
+            (!valueApproved ||
+              BigNumber(valueApproved).toNumber() >
+                BigNumber(value * 10 ** 18).toNumber()))
+        }
       >
         Approve
       </button>
@@ -61,6 +67,10 @@ export const InputField = ({
         onClick={onAction}
         disabled={
           !isConnected ||
+          value === 0 ||
+          value === "0" ||
+          value === null ||
+          value === undefined ||
           (isStake &&
             (BigNumber(valueApproved).toNumber() <= 0 ||
               !valueApproved ||
@@ -68,6 +78,7 @@ export const InputField = ({
                 BigNumber(value * 10 ** 18).toNumber()))
         }
       >{`${buttonTitle} ${unit}`}</button>
+      {console.log(typeof value)}
     </div>
   </form>
 );
