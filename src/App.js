@@ -120,6 +120,15 @@ export default class App extends Component {
     }
   };
 
+  getTokenValues = async () => {
+    await this.token.getStakeable(this.w3);
+    await this.token.getStaked(this.w3, this.stakeContract);
+    await this.token.getPendingLOYAL(this.w3, this.stakeContract);
+    await this.token.getEstimatedDailyLOYAL(this.w3, this.stakeContract);
+    await this.token.getApprovedAmount(this.w3, stakeAddress);
+    this.setState({});
+  };
+
   render() {
     return (
       <>
@@ -134,6 +143,7 @@ export default class App extends Component {
         <Routes
           w3={this.w3}
           token={this.token}
+          getTokenValues={this.getTokenValues}
           loyalLeft={this.loyalLeft}
           stakeContract={this.stakeContract}
           isConnected={this.state.isConnected}
