@@ -12,7 +12,6 @@ export const InputField = ({
   onChange,
   buttonTitle,
   isConnected,
-  isApproved,
   valueApproved,
   isStake,
   subtitle,

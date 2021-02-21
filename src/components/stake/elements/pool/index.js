@@ -79,6 +79,7 @@ export default class Pool extends Component {
       .send({ from: w3.address })
       .then((res) => {
         toast.success("Successfully Staked.");
+        this.props.getTokenValues();
         this.setState(() => ({
           toStake: 0.0,
         }));
@@ -98,7 +99,7 @@ export default class Pool extends Component {
         toast.success("Successfully Withdrawn.");
         toast.success("Successfully Claimed.");
         token.rewards = null;
-
+        this.props.getTokenValues();
         this.setState(() => ({
           toWithdraw: 0.0,
         }));
@@ -150,7 +151,7 @@ export default class Pool extends Component {
 
   render() {
     const { token, isConnected } = this.props;
-    const { toStake, toWithdraw, isApproved } = this.state;
+    const { toStake, toWithdraw } = this.state;
 
     const approved = this.props.w3?.web3?.utils.fromWei(
       token.approved.toString()
@@ -190,7 +191,6 @@ export default class Pool extends Component {
               onChange={(e) => this.onStakeChange(e)}
               buttonTitle={"Stake"}
               isConnected={isConnected}
-              isApproved={isApproved}
               isStake={true}
               valueApproved={token.approved}
               subtitle={"Approved: " + currApproved}
