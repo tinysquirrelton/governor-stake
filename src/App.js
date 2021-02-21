@@ -27,7 +27,7 @@ export default class App extends Component {
     this.wethContract = null;
     this.usdcContract = null;
     this.stakeContract = null;
-	this.loyalLeft = 0;
+    this.loyalLeft = 0;
     this.state = { isConnected: false };
   }
 
@@ -70,7 +70,14 @@ export default class App extends Component {
   }
 
   getToken = () => {
-    return new Token(pool.address, pool.lpAddress, pool.name, pool.text, pool.unit, pool.logo);
+    return new Token(
+      pool.address,
+      pool.lpAddress,
+      pool.name,
+      pool.text,
+      pool.unit,
+      pool.logo
+    );
   };
 
   getContract = (w3, address) => {
@@ -82,33 +89,33 @@ export default class App extends Component {
   };
 
   getLoyalLeft = async () => {
-	//let loyalInPool = (await this.loyalContract.methods.balanceOf(stakeAddress).call()) / 10 ** 18;
-	let rewardRate = await this.stakeContract.methods.rewardRate().call();
-	rewardRate = await this.w3.getWeiToETH(rewardRate);
-	let loyalInPool = (await this.loyalContract.methods.totalSupply().call()) / 10 ** 18;
-	loyalInPool -= (await this.stakeContract.methods.accruedRewardPerToken().call()) / 10 ** 18 * (await this.gdaoContract.methods.balanceOf(stakeAddress).call()) / 10 ** 18;
-	loyalInPool -= rewardRate * 111379; // 111379s between pause() and unpause()
-	
-	if(loyalInPool < 0) {
-		loyalInPool = 0;	
-	}
-    this.loyalLeft = Number(
-      (loyalInPool).toFixed(2)
-    ).toLocaleString();
+    let rewardRate = await this.stakeContract.methods.rewardRate().call();
+    rewardRate = await this.w3.getWeiToETH(rewardRate);
+    let timeRemainingInPeriod = await this.stakeContract.methods
+      .timeRemainingInPeriod()
+      .call();
+
+    let loyalInPool = rewardRate * (parseInt(timeRemainingInPeriod) - 111379);
+
+    if (loyalInPool < 0) {
+      loyalInPool = 0;
+    }
+
+    this.loyalLeft = Number(loyalInPool.toFixed(2)).toLocaleString();
   };
 
   setChanged = async (changeType) => {
     if (changeType === "DISCONNECTED") {
-        this.token.stakeable = null;
-        this.token.staked = null;
-        this.token.rewards = null;
+      this.token.stakeable = null;
+      this.token.staked = null;
+      this.token.rewards = null;
       this.setState({ isConnected: false });
     } else if (changeType === "CHANGED_ACCOUNT") {
-        await this.token.getStakeable(this.w3);
-        await this.token.getStaked(this.w3, this.stakeContract);
-        await this.token.getPendingLOYAL(this.w3, this.stakeContract);
-        await this.token.getEstimatedDailyLOYAL(this.w3, this.stakeContract);
-        await this.token.getApprovedAmount(this.w3, stakeAddress);
+      await this.token.getStakeable(this.w3);
+      await this.token.getStaked(this.w3, this.stakeContract);
+      await this.token.getPendingLOYAL(this.w3, this.stakeContract);
+      await this.token.getEstimatedDailyLOYAL(this.w3, this.stakeContract);
+      await this.token.getApprovedAmount(this.w3, stakeAddress);
       this.setState({ isConnected: true });
     }
   };
