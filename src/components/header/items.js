@@ -1,5 +1,5 @@
 export const statistics = {
-  to: "/statistics",
+  to: "https://governordao.org/statistics",
   title: "Statistics",
 };
 
