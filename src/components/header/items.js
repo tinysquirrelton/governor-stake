@@ -1,6 +1,6 @@
-export const solutions = {
-  to: "https://governordao.org/",
-  title: "Solutions",
+export const statistics = {
+  to: "/statistics",
+  title: "Statistics",
 };
 
 export const applications = [
