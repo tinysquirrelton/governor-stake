@@ -6,8 +6,8 @@ import Loader from "./loader";
 import OnPageChange from "../utilities/hocs/OnPageChange";
 
 // HEADER & FOOTER
-import Header from "../components/header/Header";
-import Footer from "../components/footer/Footer";
+import Header from "../governor-common/components/header/Header";
+import Footer from "../governor-common/components/footer/Footer";
 
 // LAZY IMPORT
 const Stake = lazy(() => import("../components/stake"));
