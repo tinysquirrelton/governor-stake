@@ -11,7 +11,10 @@ export default class Stake extends Component {
         <div className="stake-container">
           <div className="stake-title">
             <div className="title-text">Loyalty Mine</div>
-            <ConnectButton w3={this.props.w3} />
+            <ConnectButton
+              account={this.props.walletconnect?.account}
+              setConnection={this.props.walletconnect?.connectWeb3Manual}
+            />
           </div>
           <div className="stake-subtitle">
             <span>TVL:</span>

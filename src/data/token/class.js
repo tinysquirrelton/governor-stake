@@ -28,9 +28,9 @@ export default class Token {
     this.approved = 0;
   }
 
-  async getContract(w3) {
-    if (w3.isAddressValid(this.address)) {
-      this.contract = await new w3.web3.eth.Contract(ERC20.abi, this.address);
+  async getContract(web3) {
+    if (web3?.utils.isAddress(this.address)) {
+      this.contract = await new web3.eth.Contract(ERC20.abi, this.address);
     }
   }
 
@@ -85,10 +85,10 @@ export default class Token {
     }
   }
 
-  async getTVL(w3) {
-    if (w3.isAddressValid(this.address)) {
+  async getTVL(web3) {
+    if (web3 != null && web3?.utils.isAddress(this.address)) {
       let b = await this.contract.methods.balanceOf(stakeAddress).call();
-      let bB = await w3.getWeiToETH(b);
+      let bB = await web3?.utils.fromWei(b, "ether");
       this.tvl = bB * this.price;
     }
   }
