@@ -8,7 +8,7 @@ import ERC20 from "./data/token/abi/ERC20.json";
 import StakeABI from "./data/token/abi/StakeABI.json";
 import BigNumber from "bignumber.js/bignumber";
 
-import WalletConnect from "./connectWallet";
+import WalletConnect from "./governor-common/components/walletconnect/WalletConnect";
 
 import {
   wETHAddress,
@@ -16,10 +16,10 @@ import {
   stakeAddress,
   GDAOAddress, // stakingToken
   LOYALAddress,
-  testnet,
 } from "./utilities/constants/constants";
 
 const Close = ({ closeToast }) => <X size={20} onClick={closeToast} />;
+BigNumber.config({ DECIMAL_PLACES: 4 });
 
 export default class App extends Component {
   constructor(props) {
@@ -63,7 +63,7 @@ export default class App extends Component {
     const [wethC, ussdcC, gdaoC, loyalC, stakeC] = await Promise.all(
       cAddresses.map(async (c) => {
         let contract;
-        if (c != stakeAddress) {
+        if (c !== stakeAddress) {
           contract = await this.getContract(web3, c);
         } else {
           contract = await this.getContractStake(web3, c);
