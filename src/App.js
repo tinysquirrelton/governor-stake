@@ -60,7 +60,12 @@ export default class App extends Component {
 
     const [wethC, ussdcC, gdaoC, loyalC, stakeC] = await Promise.all(
       cAddresses.map(async (c) => {
-        let contract = await this.getContract(web3, c);
+        let contract;
+        if(c != stakeAddress) {
+          contract = await this.getContract(web3, c);
+        } else {
+          contract = await this.getContractStake(web3, c);
+        }
         return contract;
       })
     );
@@ -70,6 +75,7 @@ export default class App extends Component {
     this.gdaoContract = gdaoC;
     this.loyalContract = loyalC;
     this.stakeContract = stakeC;
+    
     this.setState({});
   };
 

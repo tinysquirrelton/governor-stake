@@ -34,21 +34,21 @@ export default class Token {
     }
   }
 
-  getWeiToETH(w3, balance) {
-    return BigNumber(w3.utils.fromWei(balance, "ether")).toNumber();
+  getWeiToETH(web3, balance) {
+    return BigNumber(web3.utils.fromWei(balance, "ether")).toNumber();
   }
 
-  getWeiToETHString(w3, balance) {
-    return BigNumber(w3.utils.fromWei(balance, "ether")).toString(10);
+  getWeiToETHString(web3, balance) {
+    return BigNumber(web3.utils.fromWei(balance, "ether")).toString(10);
   }
 
-  async getPrice(w3, wethContract, usdcContract) {
-    if (w3?.utils.isAddress(this.lpAddress)) {
+  async getPrice(web3, wethContract, usdcContract) {
+    if (web3?.utils.isAddress(this.lpAddress)) {
       let w = await wethContract.methods.balanceOf(this.lpAddress).call();
-      let wB = await this.getWeiToETH(w3, w);
+      let wB = await this.getWeiToETH(web3, w);
 
       let x = await this.contract.methods.balanceOf(this.lpAddress).call();
-      let xB = await this.getWeiToETH(w3, x);
+      let xB = await this.getWeiToETH(web3, x);
       let p = wB / xB; // Price in ETH
 
       if (testnet) {
@@ -58,7 +58,7 @@ export default class Token {
         this.price = p * 1250;
       } else {
         let i = await wethContract.methods.balanceOf(USDCWETHAddress).call();
-        let iB = await this.getWeiToETH(w3, i);
+        let iB = await this.getWeiToETH(web3, i);
         let j = BigNumber(
           await usdcContract.methods.balanceOf(USDCWETHAddress).call()
         ).toNumber();
@@ -69,20 +69,20 @@ export default class Token {
     }
   }
 
-  async getGDAOPrice(w3, wethContract, usdcContract) {
+  async getGDAOPrice(web3, wethContract, usdcContract) {
     let w = await wethContract.methods.balanceOf(GDAOAddress).call();
-    let wB = await this.getWeiToETH(w3, w);
+    let wB = await this.getWeiToETH(web3, w);
 
-    let GDAOContract = await new w3.web3.eth.Contract(ERC20.abi, GDAOAddress);
+    let GDAOContract = await new web3.eth.Contract(ERC20.abi, GDAOAddress);
     let g = await GDAOContract.methods.balanceOf(GDAOAddress).call();
-    let gB = await this.getWeiToETH(w3, g);
+    let gB = await this.getWeiToETH(web3, g);
     let p = wB / gB; // Price in ETH
 
     if (testnet) {
       return p * 650;
     } else {
       let i = await wethContract.methods.balanceOf(USDCWETHAddress).call();
-      let iB = await this.getWeiToETH(w3, i);
+      let iB = await this.getWeiToETH(web3, i);
       let j = BigNumber(
         await usdcContract.methods.balanceOf(USDCWETHAddress).call()
       ).toNumber();
@@ -93,32 +93,32 @@ export default class Token {
     }
   }
 
-  async getTVL(w3) {
-    if (w3 != null && w3?.utils.isAddress(this.address)) {
+  async getTVL(web3) {
+    if (web3 != null && web3?.utils.isAddress(this.address)) {
       let b = await this.contract.methods.balanceOf(stakeAddress).call();
-      let bB = await w3?.utils.fromWei(b, "ether");
+      let bB = await web3?.utils.fromWei(b, "ether");
       this.tvl = bB * this.price;
     }
   }
 
-  async getStakeable(w3, account) {
-    if (w3?.utils.isAddress(account) && w3?.utils.isAddress(this.address)) {
+  async getStakeable(web3, account) {
+    if (web3?.utils.isAddress(account) && web3?.utils.isAddress(this.address)) {
       let b = await this.contract.methods.balanceOf(account).call();
       this.stakeable = b;
     }
   }
 
-  async getStaked(w3, stakeContract, account) {
-    if (w3?.utils.isAddress(account)) {
+  async getStaked(web3, stakeContract, account) {
+    if (web3?.utils.isAddress(account)) {
       let b = await stakeContract.methods.balanceOf(account).call();
       this.staked = b;
     }
   }
 
-  async getPendingLOYAL(w3, stakeContract, account) {
-    if (w3?.utils.isAddress(account)) {
-      let b = await stakeContract.methods.earned(account).call();
-      this.rewards = await this.getWeiToETHString(w3, b);
+  async getPendingLOYAL(web3, stakeContract, account) {
+    if (web3?.utils.isAddress(account)) {
+      let b = await stakeContract?.methods.earned(account).call();
+      this.rewards = await this.getWeiToETHString(web3, b);
     }
   }
 
@@ -143,9 +143,9 @@ export default class Token {
     }
   }
 
-  async getApprovedAmount(w3, stakeAddress, account) {
-    if (w3?.utils.isAddress(account)) {
-      let GDAOContract = await new w3.web3.eth.Contract(ERC20.abi, GDAOAddress);
+  async getApprovedAmount(web3, stakeAddress, account) {
+    if (web3?.utils.isAddress(account)) {
+      let GDAOContract = await new web3.eth.Contract(ERC20.abi, GDAOAddress);
       let allowance = await GDAOContract.methods
         .allowance(account, stakeAddress)
         .call();
