@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import Routes from "./routes";
 import { ToastContainer } from "react-toastify";
 import { X } from "react-feather";
-import W3C from "./data/web3/class";
 import Token from "./data/token/class";
 import { pool } from "./utilities/constants/constants";
 import ERC20 from "./data/token/abi/ERC20.json";
 import StakeABI from "./data/token/abi/StakeABI.json";
+import BigNumber from "bignumber.js/bignumber";
 
 import WalletConnect from "./connectWallet";
 
@@ -24,14 +24,12 @@ const Close = ({ closeToast }) => <X size={20} onClick={closeToast} />;
 export default class App extends Component {
   constructor(props) {
     super(props);
-    this.w3 = new W3C();
     this.token = this.getToken();
     this.wethContract = null;
     this.usdcContract = null;
     this.stakeContract = null;
     this.loyalLeft = 0;
-    this.state = {};
-    
+
     this.walletconnect = null;
     this.web3 = null;
   }
@@ -43,32 +41,35 @@ export default class App extends Component {
     );
     await this.walletconnect.connectWeb3();
     this.web3 = await this.walletconnect.getWeb3();
-    
-    //let chainId;
 
-    // Init Web3
-    //this.w3.onAccountChange(this.setChanged);
-    //this.w3.onNetworkChange();
-
-    // Get contracts to derive from
-    
-    
-    let self = this;
     this.getMineStats();
+    let self = this;
     this.statsInterval = setInterval(function () {
       self.getMineStats();
     }, 5000);
   }
-  
-  
-  onConnect = (web3) => {
-    this.wethContract = this.getContract(web3, wETHAddress);
-    this.usdcContract = this.getContract(web3, USDCAddress);
-    this.gdaoContract = this.getContract(web3, GDAOAddress);
-    this.loyalContract = this.getContract(web3, LOYALAddress);
-    this.stakeContract = this.getContractStake(web3, stakeAddress);
-    
-    // force a state update to get new values
+
+  onConnect = async (web3) => {
+    const cAddresses = [
+      wETHAddress,
+      USDCAddress,
+      GDAOAddress,
+      LOYALAddress,
+      stakeAddress,
+    ];
+
+    const [wethC, ussdcC, gdaoC, loyalC, stakeC] = await Promise.all(
+      cAddresses.map(async (c) => {
+        let contract = await this.getContract(web3, c);
+        return contract;
+      })
+    );
+
+    this.wethContract = wethC;
+    this.usdcContract = ussdcC;
+    this.gdaoContract = gdaoC;
+    this.loyalContract = loyalC;
+    this.stakeContract = stakeC;
     this.setState({});
   };
 
@@ -76,24 +77,40 @@ export default class App extends Component {
     this.token.stakeable = null;
     this.token.staked = null;
     this.token.rewards = null;
+    this.setState({});
   };
-  
+
   getMineStats = async () => {
-    if (this.web3 != null && this.walletconnect?.account != null && this.web3?.utils.isAddress(this.walletconnect?.account)) {
+    if (
+      this.web3 != null &&
+      this.walletconnect?.account != null &&
+      this.web3?.utils.isAddress(this.walletconnect?.account)
+    ) {
       await this.token.getContract(this.web3);
-      await this.token.getPrice(this.w3, this.wethContract, this.usdcContract);
+      await this.token.getPrice(
+        this.web3,
+        this.wethContract,
+        this.usdcContract
+      );
       await this.token.getTVL(this.web3);
-      console.log(this.token.tvl);
       if (this.walletconnect?.isConnected && this.stakeContract !== null) {
-        await this.token.getStakeable(this.w3);
-        await this.token.getStaked(this.w3, this.stakeContract);
-        await this.token.getPendingLOYAL(this.w3, this.stakeContract);
-        await this.token.getEstimatedDailyLOYAL(this.w3, this.stakeContract);
-        await this.token.getApprovedAmount(this.w3, stakeAddress);
+        let account = this.walletconnect?.account;
+        await this.token.getStakeable(this.web3, account);
+        await this.token.getStaked(this.web3, this.stakeContract, account);
+        await this.token.getPendingLOYAL(
+          this.web3,
+          this.stakeContract,
+          account
+        );
+        await this.token.getEstimatedDailyLOYAL(
+          this.web3,
+          this.stakeContract,
+          account
+        );
+        await this.token.getApprovedAmount(this.web3, stakeAddress, account);
       }
     }
-  }
-
+  };
 
   getToken = () => {
     return new Token(
@@ -116,7 +133,10 @@ export default class App extends Component {
 
   getLoyalLeft = async () => {
     let rewardRate = await this.stakeContract.methods.rewardRate().call();
-    rewardRate = await this.w3.getWeiToETH(rewardRate);
+    rewardRate = BigNumber(
+      await this.web3.utils.fromWei(rewardRate, "ether")
+    ).toNumber();
+
     let timeRemainingInPeriod = await this.stakeContract.methods
       .timeRemainingInPeriod()
       .call();
@@ -131,11 +151,11 @@ export default class App extends Component {
   };
 
   getTokenValues = async () => {
-    await this.token.getStakeable(this.w3);
-    await this.token.getStaked(this.w3, this.stakeContract);
-    await this.token.getPendingLOYAL(this.w3, this.stakeContract);
-    await this.token.getEstimatedDailyLOYAL(this.w3, this.stakeContract);
-    await this.token.getApprovedAmount(this.w3, stakeAddress);
+    await this.token.getStakeable(this.web3);
+    await this.token.getStaked(this.web3, this.stakeContract);
+    await this.token.getPendingLOYAL(this.web3, this.stakeContract);
+    await this.token.getEstimatedDailyLOYAL(this.web3, this.stakeContract);
+    await this.token.getApprovedAmount(this.web3, stakeAddress);
   };
 
   render() {
@@ -150,15 +170,12 @@ export default class App extends Component {
           draggablePercent={25}
         />
         <Routes
-          w3={this.w3}
+          w3={this.web3}
           token={this.token}
           getTokenValues={this.getTokenValues}
           loyalLeft={this.loyalLeft}
           stakeContract={this.stakeContract}
           isConnected={this.walletconnect?.isConnected}
-          isSmall={this.state.isSmall}
-          isMedium={this.state.isMedium}
-          isLarge={this.state.isLarge}
         />
       </>
     );
