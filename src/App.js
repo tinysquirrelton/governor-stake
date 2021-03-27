@@ -28,7 +28,9 @@ export default class App extends Component {
     this.wethContract = null;
     this.usdcContract = null;
     this.stakeContract = null;
-    this.loyalLeft = 0;
+    this.state = {
+      loyalLeft: 0,
+    };
 
     this.walletconnect = null;
     this.web3 = null;
@@ -61,7 +63,7 @@ export default class App extends Component {
     const [wethC, ussdcC, gdaoC, loyalC, stakeC] = await Promise.all(
       cAddresses.map(async (c) => {
         let contract;
-        if(c != stakeAddress) {
+        if (c != stakeAddress) {
           contract = await this.getContract(web3, c);
         } else {
           contract = await this.getContractStake(web3, c);
@@ -75,7 +77,6 @@ export default class App extends Component {
     this.gdaoContract = gdaoC;
     this.loyalContract = loyalC;
     this.stakeContract = stakeC;
-    
     this.setState({});
   };
 
@@ -116,6 +117,7 @@ export default class App extends Component {
         await this.token.getApprovedAmount(this.web3, stakeAddress, account);
       }
     }
+    this.setState({});
   };
 
   getToken = () => {
@@ -152,8 +154,9 @@ export default class App extends Component {
     if (loyalInPool < 0) {
       loyalInPool = 0;
     }
-
-    this.loyalLeft = Number(loyalInPool.toFixed(2)).toLocaleString();
+    this.setState({
+      loyalLeft: Number(loyalInPool.toFixed(2)).toLocaleString(),
+    });
   };
 
   getTokenValues = async () => {
@@ -162,6 +165,7 @@ export default class App extends Component {
     await this.token.getPendingLOYAL(this.web3, this.stakeContract);
     await this.token.getEstimatedDailyLOYAL(this.web3, this.stakeContract);
     await this.token.getApprovedAmount(this.web3, stakeAddress);
+    this.setState({});
   };
 
   render() {
@@ -179,7 +183,7 @@ export default class App extends Component {
           w3={this.web3}
           token={this.token}
           getTokenValues={this.getTokenValues}
-          loyalLeft={this.loyalLeft}
+          loyalLeft={this.state.loyalLeft}
           stakeContract={this.stakeContract}
           isConnected={this.walletconnect?.isConnected}
         />
