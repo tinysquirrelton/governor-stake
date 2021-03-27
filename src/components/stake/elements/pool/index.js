@@ -150,7 +150,7 @@ export default class Pool extends Component {
   };
 
   render() {
-    const { token, isConnected } = this.props;
+    const { token, walletconnect } = this.props;
     const { toStake, toWithdraw } = this.state;
 
     const approved = this.props.w3?.web3?.utils.fromWei(
@@ -161,9 +161,9 @@ export default class Pool extends Component {
     return (
       <div className={`stake-${this.state.isSmall ? "box" : "row"}-container`}>
         {this.state.isSmall ? (
-          <Box token={token} isConnected={isConnected} />
+          <Box token={token} isConnected={walletconnect?.isConnected} />
         ) : (
-          <Row token={token} isConnected={isConnected} />
+          <Row token={token} isConnected={walletconnect?.isConnected} />
         )}
         <div className="expanded">
           <div className="statistics">
@@ -171,12 +171,12 @@ export default class Pool extends Component {
             <Statistics
               t={`${token.unit} Staked`}
               v={`${convertToETH(token.staked, token.unit)} ${token.unit}`}
-              isConnected={isConnected}
+              isConnected={walletconnect?.isConnected}
             />
             <Statistics
               t={"Claimable Rewards"}
               v={`${roundValue(token.rewards)} LOYAL`}
-              isConnected={isConnected}
+              isConnected={walletconnect?.isConnected}
             />
           </div>
           <div className="fields">
@@ -190,7 +190,7 @@ export default class Pool extends Component {
               value={toStake}
               onChange={(e) => this.onStakeChange(e)}
               buttonTitle={"Stake"}
-              isConnected={isConnected}
+              isConnected={walletconnect?.isConnected}
               isStake={true}
               valueApproved={token.approved}
               subtitle={"Approved: " + currApproved}
@@ -205,7 +205,7 @@ export default class Pool extends Component {
               value={toWithdraw}
               onChange={(e) => this.onWithdrawChange(e)}
               buttonTitle={"Withdraw"}
-              isConnected={isConnected}
+              isConnected={walletconnect?.isConnected}
               isStake={false}
               subtitle={""}
             />
@@ -213,12 +213,12 @@ export default class Pool extends Component {
           <div className="claims">
             <div className="title">Available Rewards:</div>
             <div className="value">{`${
-              isConnected ? roundValue(token.rewards) : "-"
+              walletconnect?.isConnected ? roundValue(token.rewards) : "-"
             } LOYAL`}</div>
             <button
               className="claim-btn"
               onClick={this.onClaim}
-              disabled={!isConnected}
+              disabled={!walletconnect?.isConnected}
             >
               Claim Rewards
             </button>
