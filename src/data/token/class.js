@@ -117,21 +117,21 @@ export default class Token {
 
   async getPendingLOYAL(web3, stakeContract, account) {
     if (web3?.utils.isAddress(account)) {
-      let b = await stakeContract?.methods.earned(account).call();
+      let b = await stakeContract.methods.earned(account).call();
       this.rewards = await this.getWeiToETHString(web3, b);
     }
   }
 
-  async getEstimatedDailyLOYAL(w3, stakeContract, account) {
-    if (w3?.utils.isAddress(account)) {
+  async getEstimatedDailyLOYAL(web3, stakeContract, account) {
+    if (web3?.utils.isAddress(account)) {
       let rewardRate = await stakeContract.methods.rewardRate().call();
       let userStaked = await stakeContract.methods.balanceOf(account).call();
       let totalStaked = await this.contract.methods
         .balanceOf(stakeAddress)
         .call();
-      userStaked = await this.getWeiToETH(w3, userStaked);
-      totalStaked = await this.getWeiToETH(w3, totalStaked);
-      rewardRate = await this.getWeiToETH(w3, rewardRate);
+      userStaked = await this.getWeiToETH(web3, userStaked);
+      totalStaked = await this.getWeiToETH(web3, totalStaked);
+      rewardRate = await this.getWeiToETH(web3, rewardRate);
       let e = new BigNumber(
         (userStaked / totalStaked) * rewardRate * 60 * 60 * 24
       );
