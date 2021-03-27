@@ -36,7 +36,7 @@ export default class Pool extends Component {
   };
 
   onConvert = (n) => {
-    return this.props.w3.web3.utils.toWei(n.toString());
+    return this.props.walletconnect?.web3?.utils.toWei(n.toString());
   };
 
   onMaxStake = () => {
@@ -52,16 +52,16 @@ export default class Pool extends Component {
   };
 
   onApprove = () => {
-    const { w3, token, stakeContract } = this.props;
+    const { web3, token, stakeContract, walletconnect } = this.props;
     let b = token.stakeable * 4;
     let uB = this.onConvert(b / 10 ** 18);
 
     token.contract.methods
       .approve(stakeContract._address, uB)
-      .send({ from: w3.address })
+      .send({ from: walletconnect.account })
       .then((res) => {
         if (res.status === true) {
-          token.getApprovedAmount(w3, token.stakeAddress);
+          token.getApprovedAmount(web3, token.stakeAddress);
           toast.success("Successfully Approved.");
           this.setState({ isApproved: true });
         }
@@ -70,13 +70,13 @@ export default class Pool extends Component {
   };
 
   onStakeExecute = () => {
-    const { w3, stakeContract } = this.props;
+    const { stakeContract, walletconnect } = this.props;
     const tD = this.state.toStake;
     let d = this.onConvert(tD);
 
     stakeContract.methods
       .stake(d)
-      .send({ from: w3.address })
+      .send({ from: walletconnect.account })
       .then((res) => {
         toast.success("Successfully Staked.");
         this.props.getTokenValues();
@@ -88,13 +88,13 @@ export default class Pool extends Component {
   };
 
   onWithdrawExcecute = () => {
-    const { w3, token, stakeContract } = this.props;
+    const { token, stakeContract, walletconnect } = this.props;
     const tW = this.state.toWithdraw;
     let w = this.onConvert(tW);
 
     stakeContract.methods
       .withdraw(w)
-      .send({ from: w3.address })
+      .send({ from: walletconnect.account })
       .then((res) => {
         toast.success("Successfully Withdrawn.");
         toast.success("Successfully Claimed.");
@@ -108,10 +108,10 @@ export default class Pool extends Component {
   };
 
   onClaim = () => {
-    const { w3, token, stakeContract } = this.props;
+    const { token, stakeContract, walletconnect } = this.props;
     stakeContract.methods
       .getReward()
-      .send({ from: w3.address })
+      .send({ from: walletconnect.account })
       .then((res) => {
         toast.success("Successfully Claimed.");
         token.rewards = null;
@@ -153,7 +153,7 @@ export default class Pool extends Component {
     const { token, walletconnect } = this.props;
     const { toStake, toWithdraw } = this.state;
 
-    const approved = this.props.w3?.web3?.utils.fromWei(
+    const approved = this.props.walletconnect?.web3?.utils.fromWei(
       token.approved.toString()
     );
     const currApproved = approved !== undefined ? approved : "-";
