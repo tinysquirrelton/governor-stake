@@ -58,20 +58,24 @@ export default class WalletConnect {
   };
 
   connectWeb3 = async () => {
-    this.provider = await this.web3Modal.connect();
-    await this.subscribeProvider(this.provider);
-    this.web3 = await this.initWeb3(this.provider);
-    const accounts = await this.web3.eth.getAccounts();
-    this.account = accounts[0];
-    this.networkId = await this.web3.eth.net.getId();
-    this.chainId = await this.web3.eth.chainId();
-    this.isConnected = true;
+    try {
+      this.provider = await this.web3Modal.connect();
+      await this.subscribeProvider(this.provider);
+      this.web3 = await this.initWeb3(this.provider);
+      const accounts = await this.web3.eth.getAccounts();
+      this.account = accounts[0];
+      this.networkId = await this.web3.eth.net.getId();
+      this.chainId = await this.web3.eth.chainId();
+      this.isConnected = true;
 
-    if (this.chainId === 1) {
-      this.onConnect(this.web3);
-    } else {
-      this.account = null;
-      toast.error("You need to be on the Ethereum Mainnet");
+      if (this.chainId === 1) {
+        this.onConnect(this.web3);
+      } else {
+        this.account = null;
+        toast.error("You need to be on the Ethereum Mainnet");
+      }
+    } catch (e) {
+      console.log(e);
     }
   };
 
