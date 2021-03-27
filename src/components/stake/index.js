@@ -5,6 +5,16 @@ import { roundValue } from "../../utilities/helpers";
 import "./style.scss";
 
 export default class Stake extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+  
+  testConnection = () => {
+    console.log(this.props);
+    //this.props.walletconnect?.connectWeb3Manual();
+  }
+  
   render() {
     return (
       <div className="max-width-container">
@@ -13,7 +23,8 @@ export default class Stake extends Component {
             <div className="title-text">Loyalty Mine</div>
             <ConnectButton
               account={this.props.walletconnect?.account}
-              setConnection={this.props.walletconnect?.connectWeb3Manual}
+              setConnection={this.testConnection}
+              //setConnection={this.props.walletconnect?.connectWeb3Manual}
             />
           </div>
           <div className="stake-subtitle">
