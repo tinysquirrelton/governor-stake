@@ -185,7 +185,7 @@ export default class App extends Component {
           getTokenValues={this.getTokenValues}
           loyalLeft={this.state.loyalLeft}
           stakeContract={this.stakeContract}
-          isConnected={this.walletconnect?.isConnected}
+          walletconnect={this.walletconnect}
         />
       </>
     );
