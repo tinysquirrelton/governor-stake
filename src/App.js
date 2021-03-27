@@ -76,8 +76,8 @@ export default class App extends Component {
     this.usdcContract = ussdcC;
     this.gdaoContract = gdaoC;
     this.loyalContract = loyalC;
-    this.stakeContract = stakeC;
-    this.setState({});
+    this.stakeContract = await stakeC;
+    await this.getLoyalLeft();
   };
 
   onResetConnect = () => {
