@@ -1,6 +1,10 @@
 @import "styles/breakpoints.scss";
 @import "assets/fonts/fonts.scss";
 
+.web3modal-modal-lightbox{
+  z-index: 100 !important;
+}
+
 body {
   margin: 0;
   font-family: "OpenSans" !important;
