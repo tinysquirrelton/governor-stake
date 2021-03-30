@@ -181,6 +181,30 @@ button[disabled] {
           background-color: #231b68;
         }
       }
+      &__claim-btn {
+        display: block;
+        margin: 8px auto 4px auto;
+        background-color: white;
+        border: solid 1px lightgray;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 6px rgba(0,0,0,0.12);
+        color: #354e8e;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 10px 0;
+        width: 150px;
+        cursor: pointer;
+        &:hover {
+          color: white;
+          background-color: #4a8cc9;
+        }
+        &:disabled,
+        &[disabled] {
+          border-color: #cccccc;
+          color: #aaaaaa;
+          background-color: #dddddd;
+        }
+      }
     }
   }
 }

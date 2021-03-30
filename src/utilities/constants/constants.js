@@ -34,6 +34,25 @@ export const LOYALAddress = testnet
 ? "0x250aa8028eade2c3005a29f55589dc0d7bc12cc9"
 : "0xeda4f23957d2f819c22761c4d6d6157bd3fe0724";
 
+
+// NFT Purchase Contracts
+
+export const NFTStafferSwap = testnet
+? "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f"
+: "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f";
+
+export const NFTRepresentativeSwap = testnet
+? "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f"
+: "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f";
+
+export const NFTCouncilSwap = testnet
+? "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f"
+: "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f";
+
+export const NFTGovernorSwap = testnet
+? "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f"
+: "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f";
+
 // Chain ID - 1: Mainnet - 4: Rinkeby
 export const chainId = testnet ? 4 : 1;
 
