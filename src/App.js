@@ -44,11 +44,13 @@ export default class App extends Component {
     await this.walletconnect.connectWeb3();
     this.web3 = await this.walletconnect.getWeb3();
 
-    this.getMineStats();
     let self = this;
-    this.statsInterval = setInterval(function () {
-      self.getMineStats();
-    }, 5000);
+    if(this.web3.currentProvider.networkVersion === 1) {
+      this.getMineStats();
+      this.statsInterval = setInterval(function () {
+        self.getMineStats();
+      }, 5000);
+    }
   }
 
   onConnect = async (web3) => {
@@ -160,11 +162,13 @@ export default class App extends Component {
   };
 
   getTokenValues = async () => {
+    console.log('test1')
     await this.token.getStakeable(this.web3);
     await this.token.getStaked(this.web3, this.stakeContract);
     await this.token.getPendingLOYAL(this.web3, this.stakeContract);
     await this.token.getEstimatedDailyLOYAL(this.web3, this.stakeContract);
     await this.token.getApprovedAmount(this.web3, stakeAddress);
+    console.log('test')
     this.setState({});
   };
 

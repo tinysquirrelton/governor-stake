@@ -13,7 +13,7 @@ const providerOptions = {
   walletconnect: {
     package: WalletConnectProvider, // required
     options: {
-      infuraId: testnet ? '32889197a22c47e7b40ed60e32f745d8' : "e35323bc24d243c6a971cefcaaa55953", // required
+      infuraId: testnet ? '665449e765ef407b9031c69c9e6a02f0' : "e35323bc24d243c6a971cefcaaa55953", // required
     },
   },
 };
@@ -73,12 +73,11 @@ export default class WalletConnect {
       this.chainId = await this.web3.eth.chainId();
       this.isConnected = true;
 
-
-      if (this.chainId === (testnet ? 4 : 1)) {
+      if (this.chainId === (testnet ? 3 : 1)) {
         this.onConnect(this.web3);
       } else {
         this.account = null;
-        toast.error(testnet ? 'You need to be on Rinkeby Testnet' : "You need to be on the Ethereum Mainnet");
+        toast.error(testnet ? 'You need to be on Ropsten Testnet' : "You need to be on the Ethereum Mainnet");
       }
     } catch (e) {
       console.log(e);
