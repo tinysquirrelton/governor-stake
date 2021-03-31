@@ -23,7 +23,7 @@ export default class Stake extends Component {
     this.state = {
       isSaleActive: false,
       userLoyalBalance: 0,
-      approvedAmounts: [0,0,0,0]
+      approvedAmounts: ['0','0','0','0']
     }
     
     this.loyalTokenContract = null;
@@ -33,45 +33,58 @@ export default class Stake extends Component {
     this.purchaseGovernorContract = null;
     this.contractArray = [];
     this.contractAddressArray = [];
-    this.priceArray = [1000*10**18,2000*10**18,4000*10**18,8000*10**18];
+    this.priceArray = ['1000','2000','4000','8000'];
+    this.initiated = false;
+  }
+  
+  init = async() => {
+    if(!this.initiated) {
+      if(await this.props.walletconnect != null) {
+        this.loyalTokenContract = await new this.props.walletconnect.web3.eth.Contract(ERC20.abi, LOYALAddress);
+        this.purchaseStafferContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTStafferSwap);
+        this.purchaseRepresentativeContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTRepresentativeSwap);
+        this.purchaseCouncilContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTCouncilSwap);
+        this.purchaseGovernorContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTGovernorSwap);
+        
+        this.contractArray = [
+          this.purchaseStafferContract,
+          this.purchaseRepresentativeContract,
+          this.purchaseCouncilContract,
+          this.purchaseGovernorContract,
+        ];
+        
+        this.contractAddressArray = [
+          NFTStafferSwap,
+          NFTRepresentativeSwap,
+          NFTCouncilSwap,
+          NFTGovernorSwap,
+        ];
+        
+        this.getApprovedAmounts();
+        
+        let saleActive = await this.contractArray[0].methods.active().call();
+        this.setState({isSaleActive: saleActive});
+        
+        this.initiated = true;
+      }
+    }
+    
   }
   
   componentDidMount = async() => {
     
-    if(await this.props.walletconnect != null) {
-      this.loyalTokenContract = await new this.props.walletconnect.web3.eth.Contract(ERC20.abi, LOYALAddress);
-      this.purchaseStafferContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTStafferSwap);
-      this.purchaseRepresentativeContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTRepresentativeSwap);
-      this.purchaseCouncilContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTCouncilSwap);
-      this.purchaseGovernorContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTGovernorSwap);
-      
-      this.contractArray = [
-        this.purchaseStafferContract,
-        this.purchaseRepresentativeContract,
-        this.purchaseCouncilContract,
-        this.purchaseGovernorContract,
-      ];
-      
-      this.contractAddressArray = [
-        this.NFTStafferSwap,
-        this.NFTRepresentativeSwap,
-        this.NFTCouncilSwap,
-        this.NFTGovernorSwap,
-      ];
-      
-      this.getApprovedAmounts();
-      
-      let saleActive = await this.contractArray[0].methods.active().call();
-      this.setState({isSaleActive: saleActive});
-    }
+    await this.init();
+    
     //todo remove dis
     this.setState({isSaleActive: true});
   }
   
   onPurchase = async(tokenId) => {
+    await this.init();
+    
     this.getApprovedAmounts().then(async() => {
       
-      if(this.state.approvedAmounts[tokenId] >= this.priceArray[tokenId]) {
+      if(parseInt(this.state.approvedAmounts[tokenId]) >= parseInt(this.priceArray[tokenId])) {
         if(tokenId >= 0 && tokenId < this.contractArray.length) {
           let hasPurchased = await this.contractArray[tokenId].methods.hasPurchased(this.props.walletconnect?.account).call();
           
@@ -92,14 +105,16 @@ export default class Stake extends Component {
         this.onApprove(tokenId, this.priceArray[tokenId]);
       }
     });
+    
   }
   
   onApprove = (tokenId, amount) => {
-    if(tokenId >= 0 && tokenId < this.contractAddressArray.length && amount > 0 && amount <= 8000*10**18) {
+    if(tokenId >= 0 && tokenId < 4) {
       let approveSpender = this.contractAddressArray[tokenId];
-
-      this.loyalTokenContract?.contract.methods
-        .approve(approveSpender, amount)
+      
+      let amountWei = this.props.walletconnect?.web3.utils.toWei(amount, 'ether');
+      this.loyalTokenContract?.methods
+        .approve(approveSpender, amountWei)
         .send({ from: this.props.walletconnect?.account })
         .then((res) => {
           if (res.status === true) {
@@ -114,15 +129,15 @@ export default class Stake extends Component {
   
   getApprovedAmounts = async() => {
     if (this.props.walletconnect?.web3?.utils.isAddress(this.props.walletconnect?.account)) {
-      let checkedApprovedAmounts = [0,0,0,0];
+      let checkedApprovedAmounts = ['0','0','0','0'];
       for(let i=0; i<this.state.approvedAmounts.length; i++) {
         let spenderAddress = this.contractAddressArray[i];
         let allowance = await this.loyalTokenContract?.methods
           .allowance(this.props.walletconnect?.account, spenderAddress)
           .call();
-        if(allowance >= 0 && !isNaN(allowance)) {
-          checkedApprovedAmounts[i] = allowance;
-        }
+        allowance = this.props.walletconnect?.web3.utils.fromWei(allowance, 'ether');
+        checkedApprovedAmounts[i] = allowance;
+        console.log(allowance);
       }
       this.setState({ approvedAmounts: checkedApprovedAmounts });
     }
@@ -198,7 +213,7 @@ export default class Stake extends Component {
                   onClick={() => this.onPurchase(0)}
                   disabled={!this.state.isSaleActive}
                 >
-                { this.state.approvedAmounts[0] < this.priceArray[0] ? 'Approve' : 'Get NFT' }
+                { this.state.approvedAmounts[0] < parseInt(this.priceArray[0]) ? 'Approve' : 'Get NFT' }
                 </button>
               </figcaption>
             </figure>
@@ -218,7 +233,7 @@ export default class Stake extends Component {
                   onClick={() => this.onPurchase(1)}
                   disabled={!this.state.isSaleActive}
                 >
-                { this.state.approvedAmounts[1] < this.priceArray[1] ? 'Approve' : 'Get NFT' }
+                { this.state.approvedAmounts[1] < parseInt(this.priceArray[1]) ? 'Approve' : 'Get NFT' }
                 </button>
               </figcaption>
             </figure>
@@ -238,7 +253,7 @@ export default class Stake extends Component {
                   onClick={() => this.onPurchase(2)}
                   disabled={!this.state.isSaleActive}
                 >
-                { this.state.approvedAmounts[2] < this.priceArray[2] ? 'Approve' : 'Get NFT' }
+                { this.state.approvedAmounts[2] < parseInt(this.priceArray[2]) ? 'Approve' : 'Get NFT' }
                 </button>
               </figcaption>
             </figure>
@@ -258,7 +273,7 @@ export default class Stake extends Component {
                   onClick={() => this.onPurchase(3)}
                   disabled={!this.state.isSaleActive}
                 >
-                { this.state.approvedAmounts[3] < this.priceArray[3] ? 'Approve' : 'Get NFT' }
+                { this.state.approvedAmounts[3] < parseInt(this.priceArray[3]) ? 'Approve' : 'Get NFT' }
                 </button>
               </figcaption>
             </figure>

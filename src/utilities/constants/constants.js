@@ -32,26 +32,26 @@ export const USDCAddress = testnet
 // Burn Purgatory Address
 export const LOYALAddress = testnet
 ? "0x250aa8028eade2c3005a29f55589dc0d7bc12cc9"
-: "0xeda4f23957d2f819c22761c4d6d6157bd3fe0724";
+: "0xEdA4F23957d2F819c22761C4d6D6157bd3fE0724";
 
 
 // NFT Purchase Contracts
 
 export const NFTStafferSwap = testnet
 ? "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f"
-: "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f";
+: "0xac0fb1bfb59122c1d906196ebdb80d5f2e0724dd";
 
 export const NFTRepresentativeSwap = testnet
-? "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f"
-: "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f";
+? "0x6785c38781aa4bd97e42fd717aa27b37538cdaa7"
+: "0xb8ba178b2180bb09e27977f443ff01280dacb235";
 
 export const NFTCouncilSwap = testnet
 ? "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f"
-: "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f";
+: "0x204934a20810f871c265087089905ecced732ed8";
 
 export const NFTGovernorSwap = testnet
 ? "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f"
-: "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f";
+: "0x42fd58d8984673ba158d3ba16f19e147d916b265";
 
 // Chain ID - 1: Mainnet - 4: Rinkeby
 export const chainId = testnet ? 4 : 1;
