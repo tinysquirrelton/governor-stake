@@ -76,6 +76,41 @@ button[disabled] {
   position: relative;
   z-index: 10;
   margin: 0 auto;
+  margin-bottom: 2em;
+  
+  & .nft-lock {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(148,148,148,0.8);
+    z-index: 95;
+    display: none;
+    
+    & .infoWrapper {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+      
+      & .header {
+        font-weight: 400;
+        font-size: 1.5em;
+      }
+      & .countdown {
+        font-weight: 600;
+        font-size: 2em;
+      }
+    }
+    
+  }
+  
+  & .nft-lock.active {
+    display: block;
+  }
 
   & .nft-title {
     display: block;
@@ -145,7 +180,7 @@ button[disabled] {
       &__image-container {
         background-color: #000000;
         text-align: center;
-        padding: 1em 1em 0;
+        padding: 0;
         border-radius: 3px 3px 0 0;
         img {
           max-height: 250px;

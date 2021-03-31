@@ -16,16 +16,26 @@ import {
 } from "../../utilities/constants/constants";
 
 
+import StafferMp4 from "../../assets/nfts/Staffer.mp4";
+import RepresentativeMp4 from "../../assets/nfts/Representative.mp4";
+import CouncilMp4 from "../../assets/nfts/Council.mp4";
+import GovernorMp4 from "../../assets/nfts/Governor.mp4";
+
+const zeroPad = (num, places) => String(num).padStart(places, '0');
+
 export default class Stake extends Component {
   
   constructor(props) {
     super(props);
     this.state = {
       isSaleActive: false,
+      hasSaleStarted: false,
+      saleStartCountdown: '00:00:00',
       approvedAmounts: ['0','0','0','0'],
       hasPurchasedArray: [false,false,false,false]
     }
     
+    this.saleStartTime = 1617220800*1000;
     this.loyalTokenContract = null;
     this.purchaseStafferContract = null;
     this.purchaseRepresentativeContract = null;
@@ -36,7 +46,8 @@ export default class Stake extends Component {
     this.burnAddress = '0x000000000000000000000000000000000000dEaD';
     this.NFTInfo = {
       priceArray: ['1000','2000','4000','8000'],
-      name: ['Staffer', 'Representative', 'Council', 'Governor']
+      name: ['Staffer', 'Representative', 'Council', 'Governor'],
+      mp4Link: [StafferMp4, RepresentativeMp4, CouncilMp4, GovernorMp4]
     };
     this.initialized = false;
   }
@@ -76,9 +87,27 @@ export default class Stake extends Component {
   
   componentDidMount = async() => {
     
+    let self = this;
+    let countdownInterval = setInterval(function() {
+      let now = new Date().getTime();
+      let startDistance = self.saleStartTime - now;
+
+      let hours = Math.floor((startDistance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      let minutes = Math.floor((startDistance % (1000 * 60 * 60)) / (1000 * 60));
+      let seconds = Math.floor((startDistance % (1000 * 60)) / 1000);
+
+      let newTimer = zeroPad(hours,2) + ":" + zeroPad(minutes,2) + ":" + zeroPad(seconds,2);
+      self.setState({saleStartCountdown: newTimer});
+
+      if (startDistance < 0) {
+        self.setState({hasSaleStarted: true});
+      }
+      
+    }, 1000);
+    
     setTimeout( async() => {
       await this.init();
-    }, 2000);
+    }, 1000);
   }
   
   onPurchase = async(tokenId) => {    
@@ -98,28 +127,26 @@ export default class Stake extends Component {
   
         }
       } else {
-        this.onApprove(tokenId, this.NFTInfo.priceArray[tokenId]);
+        this.onApprove(this.NFTInfo.priceArray[tokenId]);
       }
     });
     
   }
   
-  onApprove = (tokenId, amount) => {
-    if(tokenId >= 0 && tokenId < 4) {
-      let approveSpender = this.burnAddress;
-      
-      let amountWei = this.props.walletconnect?.web3.utils.toWei(amount, 'ether');
-      this.loyalTokenContract?.methods
-        .approve(approveSpender, amountWei)
-        .send({ from: this.props.walletconnect?.account })
-        .then((res) => {
-          if (res.status === true) {
-            this.getApprovedAmounts();
-            toast.success("Successfully Approved.");
-          }
-        })
-        .catch((err) => toast.error("Failed to Approve."));
-    }
+  onApprove = (amount) => {
+    let approveSpender = this.burnAddress;
+    
+    let amountWei = this.props.walletconnect?.web3.utils.toWei(amount, 'ether');
+    this.loyalTokenContract?.methods
+      .approve(approveSpender, amountWei)
+      .send({ from: this.props.walletconnect?.account })
+      .then((res) => {
+        if (res.status === true) {
+          this.getApprovedAmounts();
+          toast.success("Successfully Approved.");
+        }
+      })
+      .catch((err) => toast.error("Failed to Approve."));
   };
   
   
@@ -197,7 +224,6 @@ export default class Stake extends Component {
         </div>
         <div className="nft-container">
           <div className="nft-title">NFT Swap</div>
-          <div className="nft-subtitle">Coming Soon</div>
           <div className="nft-subtitle loyal-balance">Your LOYAL Balance: {this.props.userLoyalBalance}</div>
 
           <div className="nft-card-container">
@@ -205,11 +231,10 @@ export default class Stake extends Component {
             {this.NFTInfo.priceArray.map((price,index) => {
               return <figure className="card card--dark" key={index}>
               <div className="card__image-container">
-                <img
-                  src="https://media.giphy.com/media/26BRqPg05olzXG1bi/giphy.gif"
-                  alt="Eevee"
-                  className="card__image"
-                />
+                <video width="300" height="270" loop autoPlay muted>
+                  <source src={this.NFTInfo.mp4Link[index]} type="video/mp4"></source>
+                  Your browser does not support the video tag.
+                </video>
               </div>
               <figcaption className="card__caption">
                 <h1 className="card__name">{this.NFTInfo.name[index]}</h1>
@@ -217,7 +242,7 @@ export default class Stake extends Component {
                 <button
                   className="card__claim-btn"
                   onClick={() => this.onPurchase(index)}
-                  disabled={!this.state.isSaleActive || price > this.props.userLoyalBalance || this.state.hasPurchasedArray[index]}
+                  disabled={!(this.state.isSaleActive || this.state.hasSaleStarted) || price > this.props.userLoyalBalanceRaw || this.state.hasPurchasedArray[index]}
                 >
                 { this.state.hasPurchasedArray[index] ? 'Already Purchased' : (this.state.approvedAmounts[index] < parseInt(price) ? 'Approve' : 'Get NFT')  }
                 </button>
@@ -225,6 +250,12 @@ export default class Stake extends Component {
             </figure>
             })}
 
+          </div>
+          <div className={this.state.hasSaleStarted ? "nft-lock" : "nft-lock active" }>
+            <div className="infoWrapper">
+              <h3 className="header">Coming soon</h3>
+              <h2 className="countdown">{this.state.saleStartCountdown}</h2>
+            </div>
           </div>
         </div>
         <div className="gdao-texture-bg" />

@@ -35,6 +35,7 @@ export default class App extends Component {
     this.walletconnect = null;
     this.web3 = null;
     this.userLoyalBalance = 0;
+    this.userLoyalBalanceRaw = 0;
   }
 
   async componentDidMount() {
@@ -163,6 +164,7 @@ export default class App extends Component {
 
   getUserLoyalBalance = async () => {
     let balance = await this.loyalContract.methods.balanceOf(this.walletconnect?.account).call() / 10**18;
+    this.userLoyalBalanceRaw = balance;
     this.userLoyalBalance = balance.toLocaleString();
   }
 
@@ -194,6 +196,7 @@ export default class App extends Component {
           stakeContract={this.stakeContract}
           walletconnect={this.walletconnect}
           userLoyalBalance={this.userLoyalBalance}
+          userLoyalBalanceRaw={this.userLoyalBalanceRaw}
         />
       </>
     );
