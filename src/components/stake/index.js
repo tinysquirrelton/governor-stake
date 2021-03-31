@@ -6,7 +6,7 @@ import { roundValue } from "../../utilities/helpers";
 import "./style.scss";
 
 import ERC20 from "./abi/ERC20.json";
-import NFTPurchase from "./abi/NFTPurchase.json";
+import NFTPurchase from "../../data/token/abi/NFTPurchase.json";
 import {
   NFTStafferSwap,
   NFTRepresentativeSwap,
@@ -22,7 +22,8 @@ export default class Stake extends Component {
     super(props);
     this.state = {
       isSaleActive: false,
-      approvedAmounts: ['0','0','0','0']
+      approvedAmounts: ['0','0','0','0'],
+      hasPurchasedArray: [false,false,false,false]
     }
     
     this.loyalTokenContract = null;
@@ -36,72 +37,65 @@ export default class Stake extends Component {
     this.NFTInfo = {
       priceArray: ['1000','2000','4000','8000'],
       name: ['Staffer', 'Representative', 'Council', 'Governor']
-    }
-    this.initiated = false;
+    };
+    this.initialized = false;
   }
   
   init = async() => {
-    if(!this.initiated) {
-      if(await this.props.walletconnect != null) {
-        this.loyalTokenContract = await new this.props.walletconnect.web3.eth.Contract(ERC20.abi, LOYALAddress);
-        this.purchaseStafferContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTStafferSwap);
-        this.purchaseRepresentativeContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTRepresentativeSwap);
-        this.purchaseCouncilContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTCouncilSwap);
-        this.purchaseGovernorContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTGovernorSwap);
-        
-        this.contractArray = [
-          this.purchaseStafferContract,
-          this.purchaseRepresentativeContract,
-          this.purchaseCouncilContract,
-          this.purchaseGovernorContract,
-        ];
-        
-        this.contractAddressArray = [
-          NFTStafferSwap,
-          NFTRepresentativeSwap,
-          NFTCouncilSwap,
-          NFTGovernorSwap,
-        ];
-        
-        
-        let saleActive = await this.contractArray[0].methods.active().call();
-        this.setState({isSaleActive: saleActive});
-        
-        this.initiated = true;
-      }
+    if(await this.props.walletconnect != null && !this.initialized) {
+      this.loyalTokenContract = await new this.props.walletconnect.web3.eth.Contract(ERC20.abi, LOYALAddress);
+      this.purchaseStafferContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTStafferSwap);
+      this.purchaseRepresentativeContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTRepresentativeSwap);
+      this.purchaseCouncilContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTCouncilSwap);
+      this.purchaseGovernorContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTGovernorSwap);
+      
+      this.contractArray = [
+        this.purchaseStafferContract,
+        this.purchaseRepresentativeContract,
+        this.purchaseCouncilContract,
+        this.purchaseGovernorContract,
+      ];
+      
+      this.contractAddressArray = [
+        NFTStafferSwap,
+        NFTRepresentativeSwap,
+        NFTCouncilSwap,
+        NFTGovernorSwap,
+      ];
+      
+      
+      let saleActive = await this.contractArray[0].methods.active().call();
+      this.setState({isSaleActive: saleActive});
+
+      this.getApprovedAmounts();
+      this.checkHasPurchasedStatus();
+
+      this.initialized = true;
     }
   }
   
   componentDidMount = async() => {
     
-    await this.init();
-    await this.getApprovedAmounts();
-    
-    //todo remove dis
-    this.setState({isSaleActive: true});
+    setTimeout( async() => {
+      await this.init();
+    }, 2000);
   }
   
-  onPurchase = async(tokenId) => {
-    await this.init();
-    
+  onPurchase = async(tokenId) => {    
     this.getApprovedAmounts().then(async() => {
       
       if(parseInt(this.state.approvedAmounts[tokenId]) >= parseInt(this.NFTInfo.priceArray[tokenId])) {
         if(tokenId >= 0 && tokenId < this.contractArray.length) {
-          let hasPurchased = await this.contractArray[tokenId].methods.hasPurchased(this.props.walletconnect?.account).call();
           
-          if(!hasPurchased) {
-            this.contractArray[tokenId].methods
-              .purchase()
-              .send({ from: this.props.walletconnect?.account })
-              .then(async(res) => {
-                toast.success("Successfully purchased NFT.");
-                await this.getApprovedAmounts();
-              })
-              .catch((err) => toast.error("Failed to purchase."));
-          } else {
-            toast.error("You have already claimed this NFT.");
-          }
+          this.contractArray[tokenId].methods
+            .purchase()
+            .send({ from: this.props.walletconnect?.account })
+            .then(async(res) => {
+              toast.success("Successfully purchased NFT.");
+              await this.getApprovedAmounts();
+            })
+            .catch((err) => toast.error("Failed to purchase."));
+  
         }
       } else {
         this.onApprove(tokenId, this.NFTInfo.priceArray[tokenId]);
@@ -142,6 +136,14 @@ export default class Stake extends Component {
       }
       this.setState({ approvedAmounts: checkedApprovedAmounts });
     }
+  }
+
+  checkHasPurchasedStatus = async() => {
+    let statusArray = [false,false,false,false];
+    for(let i=0; i<4; i++) {
+      statusArray[i] = (await this.contractArray[i]?.methods.hasPurchased(this.props.walletconnect.account).call());
+    }
+    this.setState({ hasPurchasedArray: statusArray });
   }
   
   render() {
@@ -215,9 +217,9 @@ export default class Stake extends Component {
                 <button
                   className="card__claim-btn"
                   onClick={() => this.onPurchase(index)}
-                  disabled={!this.state.isSaleActive || price > this.props.userLoyalBalance}
+                  disabled={!this.state.isSaleActive || price > this.props.userLoyalBalance || this.state.hasPurchasedArray[index]}
                 >
-                { this.state.approvedAmounts[index] < parseInt(price) ? 'Approve' : 'Get NFT' }
+                { this.state.hasPurchasedArray[index] ? 'Already Purchased' : (this.state.approvedAmounts[index] < parseInt(price) ? 'Approve' : 'Get NFT')  }
                 </button>
               </figcaption>
             </figure>
