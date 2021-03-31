@@ -1,10 +1,178 @@
 import React, { Component } from "react";
+import { toast } from "react-toastify";
 import { ConnectButton } from "./elements/connectButton";
 import Pool from "./elements/pool";
 import { roundValue } from "../../utilities/helpers";
 import "./style.scss";
 
+import ERC20 from "./abi/ERC20.json";
+import NFTPurchase from "./abi/NFTPurchase.json";
+import {
+  NFTStafferSwap,
+  NFTRepresentativeSwap,
+  NFTCouncilSwap,
+  NFTGovernorSwap,
+  LOYALAddress
+} from "../../utilities/constants/constants";
+
+
+import StafferMp4 from "../../assets/nfts/Staffer.mp4";
+import RepresentativeMp4 from "../../assets/nfts/Representative.mp4";
+import CouncilMp4 from "../../assets/nfts/Council.mp4";
+import GovernorMp4 from "../../assets/nfts/Governor.mp4";
+
+const zeroPad = (num, places) => String(num).padStart(places, '0');
+
 export default class Stake extends Component {
+  
+  constructor(props) {
+    super(props);
+    this.state = {
+      isSaleActive: false,
+      hasSaleStarted: false,
+      saleStartCountdown: '00:00:00',
+      approvedAmounts: ['0','0','0','0'],
+      hasPurchasedArray: [false,false,false,false]
+    }
+    
+    this.saleStartTime = 1617220800*1000;
+    this.loyalTokenContract = null;
+    this.purchaseStafferContract = null;
+    this.purchaseRepresentativeContract = null;
+    this.purchaseCouncilContract = null;
+    this.purchaseGovernorContract = null;
+    this.contractArray = [];
+    this.contractAddressArray = [];
+    this.burnAddress = '0x000000000000000000000000000000000000dEaD';
+    this.NFTInfo = {
+      priceArray: ['1000','2000','4000','8000'],
+      name: ['Staffer', 'Representative', 'Council', 'Governor'],
+      mp4Link: [StafferMp4, RepresentativeMp4, CouncilMp4, GovernorMp4]
+    };
+    this.initialized = false;
+  }
+  
+  init = async() => {
+    if(await this.props.walletconnect != null && !this.initialized) {
+      this.loyalTokenContract = await new this.props.walletconnect.web3.eth.Contract(ERC20.abi, LOYALAddress);
+      this.purchaseStafferContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTStafferSwap);
+      this.purchaseRepresentativeContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTRepresentativeSwap);
+      this.purchaseCouncilContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTCouncilSwap);
+      this.purchaseGovernorContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTGovernorSwap);
+      
+      this.contractArray = [
+        this.purchaseStafferContract,
+        this.purchaseRepresentativeContract,
+        this.purchaseCouncilContract,
+        this.purchaseGovernorContract,
+      ];
+      
+      this.contractAddressArray = [
+        NFTStafferSwap,
+        NFTRepresentativeSwap,
+        NFTCouncilSwap,
+        NFTGovernorSwap,
+      ];
+      
+      
+      let saleActive = await this.contractArray[0].methods.active().call();
+      this.setState({isSaleActive: saleActive});
+
+      this.getApprovedAmounts();
+      this.checkHasPurchasedStatus();
+
+      this.initialized = true;
+    }
+  }
+  
+  componentDidMount = async() => {
+    
+    let self = this;
+    let countdownInterval = setInterval(function() {
+      let now = new Date().getTime();
+      let startDistance = self.saleStartTime - now;
+
+      let hours = Math.floor((startDistance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      let minutes = Math.floor((startDistance % (1000 * 60 * 60)) / (1000 * 60));
+      let seconds = Math.floor((startDistance % (1000 * 60)) / 1000);
+
+      let newTimer = zeroPad(hours,2) + ":" + zeroPad(minutes,2) + ":" + zeroPad(seconds,2);
+      self.setState({saleStartCountdown: newTimer});
+
+      if (startDistance < 0) {
+        self.setState({hasSaleStarted: true});
+      }
+      
+    }, 1000);
+    
+    setTimeout( async() => {
+      await this.init();
+    }, 1000);
+  }
+  
+  onPurchase = async(tokenId) => {    
+    this.getApprovedAmounts().then(async() => {
+      
+      if(parseInt(this.state.approvedAmounts[tokenId]) >= parseInt(this.NFTInfo.priceArray[tokenId])) {
+        if(tokenId >= 0 && tokenId < this.contractArray.length) {
+          
+          this.contractArray[tokenId].methods
+            .purchase()
+            .send({ from: this.props.walletconnect?.account })
+            .then(async(res) => {
+              toast.success("Successfully purchased NFT.");
+              await this.getApprovedAmounts();
+            })
+            .catch((err) => toast.error("Failed to purchase."));
+  
+        }
+      } else {
+        this.onApprove(this.NFTInfo.priceArray[tokenId]);
+      }
+    });
+    
+  }
+  
+  onApprove = (amount) => {
+    let approveSpender = this.burnAddress;
+    
+    let amountWei = this.props.walletconnect?.web3.utils.toWei(amount, 'ether');
+    this.loyalTokenContract?.methods
+      .approve(approveSpender, amountWei)
+      .send({ from: this.props.walletconnect?.account })
+      .then((res) => {
+        if (res.status === true) {
+          this.getApprovedAmounts();
+          toast.success("Successfully Approved.");
+        }
+      })
+      .catch((err) => toast.error("Failed to Approve."));
+  };
+  
+  
+  getApprovedAmounts = async() => {
+    if (this.props.walletconnect?.web3?.utils.isAddress(this.props.walletconnect?.account)) {
+      let checkedApprovedAmounts = ['0','0','0','0'];
+      for(let i=0; i<this.state.approvedAmounts.length; i++) {
+        let spenderAddress = this.burnAddress;
+        let allowance = await this.loyalTokenContract?.methods
+          .allowance(this.props.walletconnect?.account, spenderAddress)
+          .call();
+        allowance = this.props.walletconnect?.web3.utils.fromWei(allowance, 'ether');
+        checkedApprovedAmounts[i] = allowance;
+      }
+      this.setState({ approvedAmounts: checkedApprovedAmounts });
+    }
+  }
+
+  checkHasPurchasedStatus = async() => {
+    let statusArray = [false,false,false,false];
+    for(let i=0; i<4; i++) {
+      statusArray[i] = (await this.contractArray[i]?.methods.hasPurchased(this.props.walletconnect.account).call());
+    }
+    this.setState({ hasPurchasedArray: statusArray });
+  }
+  
   render() {
     return (
       <div className="max-width-container">
@@ -56,61 +224,38 @@ export default class Stake extends Component {
         </div>
         <div className="nft-container">
           <div className="nft-title">NFT Swap</div>
-          <div className="nft-subtitle">Coming Soon</div>
+          <div className="nft-subtitle loyal-balance">Your LOYAL Balance: {this.props.userLoyalBalance}</div>
 
-          <div className="nft-card-container">
-            <figure className="card card--dark">
+          <div className="nft-card-container" style={!(this.state.isSaleActive || this.state.hasSaleStarted) ? {filter: 'blur(5px)'} : {}}>
+
+            {this.NFTInfo.priceArray.map((price,index) => {
+              return <figure className="card card--dark" key={index}>
               <div className="card__image-container">
-                <img
-                  src="https://media.giphy.com/media/26BRqPg05olzXG1bi/giphy.gif"
-                  alt="Eevee"
-                  className="card__image"
-                />
+                <video width="300" height="270" loop autoPlay muted>
+                  <source src={this.NFTInfo.mp4Link[index]} type="video/mp4"></source>
+                  Your browser does not support the video tag.
+                </video>
               </div>
               <figcaption className="card__caption">
-                <h1 className="card__name">?</h1>
-                <h3 className="card__type">Coming soon</h3>
+                <h1 className="card__name">{this.NFTInfo.name[index]}</h1>
+                <h3 className="card__type">{price} LOYAL</h3>
+                <button
+                  className="card__claim-btn"
+                  onClick={() => this.onPurchase(index)}
+                  disabled={!(this.state.isSaleActive || this.state.hasSaleStarted) || price > this.props.userLoyalBalanceRaw || this.state.hasPurchasedArray[index]}
+                >
+                { this.state.hasPurchasedArray[index] ? 'Already Purchased' : (this.state.approvedAmounts[index] < parseInt(price) ? 'Approve' : 'Get NFT')  }
+                </button>
               </figcaption>
             </figure>
-            <figure className="card card--dark">
-              <div className="card__image-container">
-                <img
-                  src="https://media.giphy.com/media/26BRqPg05olzXG1bi/giphy.gif"
-                  alt="Eevee"
-                  className="card__image"
-                />
-              </div>
-              <figcaption className="card__caption">
-                <h1 className="card__name">?</h1>
-                <h3 className="card__type">Coming soon</h3>
-              </figcaption>
-            </figure>
-            <figure className="card card--dark">
-              <div className="card__image-container">
-                <img
-                  src="https://media.giphy.com/media/26BRqPg05olzXG1bi/giphy.gif"
-                  alt="Eevee"
-                  className="card__image"
-                />
-              </div>
-              <figcaption className="card__caption">
-                <h1 className="card__name">?</h1>
-                <h3 className="card__type">Coming soon</h3>
-              </figcaption>
-            </figure>
-            <figure className="card card--dark">
-              <div className="card__image-container">
-                <img
-                  src="https://media.giphy.com/media/26BRqPg05olzXG1bi/giphy.gif"
-                  alt="Eevee"
-                  className="card__image"
-                />
-              </div>
-              <figcaption className="card__caption">
-                <h1 className="card__name">?</h1>
-                <h3 className="card__type">Coming soon</h3>
-              </figcaption>
-            </figure>
+            })}
+
+          </div>
+          <div className={this.state.hasSaleStarted ? "nft-lock" : "nft-lock active" }>
+            <div className="infoWrapper">
+              <h3 className="header">Coming soon</h3>
+              <h2 className="countdown">{this.state.saleStartCountdown}</h2>
+            </div>
           </div>
         </div>
         <div className="gdao-texture-bg" />
