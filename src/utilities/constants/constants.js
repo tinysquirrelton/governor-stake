@@ -11,12 +11,12 @@ export const USDCWETHAddress = "0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc";
 
 // GDAO Address
 export const GDAOAddress = testnet
-  ? "0xf35da56343622244f9e1fb0b87950fbfd7fa991b"
+  ? "0xe6f1f61b2419ef3b2658e1ffc5118ba5d5e5c891"
   : "0x515d7E9D75E2b76DB60F8a051Cd890eBa23286Bc";
 
 // GDAO-WETH LP Address
 export const GDAOWETHLPAddress = testnet
-  ? "0xb354b410071a12b5ccB28Bd3275A44C6Dc9DBC61"
+  ? "0xe89e55af6a4ee4b86af397bc1977732eceed591a"
   : "0x4D184bf6F805Ee839517164D301f0C4e5d25c374";
 
 // WETH Address
@@ -26,12 +26,12 @@ export const wETHAddress = testnet
 
 // USDC Address
 export const USDCAddress = testnet
-  ? "0xb7dbd69de83e7ed358c7687c1c1970e5dd121818"
+  ? "0x07865c6E87B9F70255377e024ace6630C1Eaa37F"
   : "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
 
 // Burn Purgatory Address
 export const LOYALAddress = testnet
-? "0x250aa8028eade2c3005a29f55589dc0d7bc12cc9"
+? "0x3035311E004FA142E10A0e9C6b0ce8eACc4d9774"
 : "0xEdA4F23957d2F819c22761C4d6D6157bd3fE0724";
 
 
@@ -53,12 +53,12 @@ export const NFTGovernorSwap = testnet
 ? "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f"
 : "0x42fd58d8984673ba158d3ba16f19e147d916b265";
 
-// Chain ID - 1: Mainnet - 4: Rinkeby
-export const chainId = testnet ? 4 : 1;
+// Chain ID - 1: Mainnet - 3: Ropsten
+export const chainId = testnet ? 3 : 1;
 
 // Infura Provider
 export const infuraProvider = testnet
-  ? `https://rinkeby.infura.io/v3/${process.env.REACT_APP_INFURA_TEST_ID}`
+  ? `https://ropsten.infura.io/v3/${process.env.REACT_APP_INFURA_TEST_ID}`
   : `https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_PROD_ID}`;
 
 // Pools containing Tokens
@@ -66,7 +66,7 @@ export const pool = testnet ? testpool : prodpool;
 
 // Stake Address
 export const stakeAddress = testnet
-  ? "0x20bEA2175D59F1c59BA0D76e934E296b26d8e003"
+  ? "0xc9fFdC4Bf1d73F596d7B24592E188B6e8fBbF6f8"
   : "0xda58927f4065F1D02a6ea850C2Aac49D7362A643";
 
 //------------------------------
