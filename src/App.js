@@ -8,7 +8,7 @@ import ERC20 from "./data/token/abi/ERC20.json";
 import StakeABI from "./data/token/abi/StakeABI.json";
 import BigNumber from "bignumber.js/bignumber";
 
-import WalletConnect from "./governor-common/components/walletconnect/WalletConnect";
+import WalletConnect from "./governor-common/walletconnect/WalletConnect";
 
 import {
   wETHAddress,

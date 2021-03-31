@@ -5,7 +5,6 @@
 
 # Dependencies
 /node_modules
-/src/governor-common
 
 # Files that might appear in the root of a volume
 .DocumentRevisions-V100
