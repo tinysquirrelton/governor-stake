@@ -226,7 +226,7 @@ export default class Stake extends Component {
           <div className="nft-title">NFT Swap</div>
           <div className="nft-subtitle loyal-balance">Your LOYAL Balance: {this.props.userLoyalBalance}</div>
 
-          <div className="nft-card-container">
+          <div className="nft-card-container" style={!(this.state.isSaleActive || this.state.hasSaleStarted) ? {filter: 'blur(5px)'} : {}}>
 
             {this.NFTInfo.priceArray.map((price,index) => {
               return <figure className="card card--dark" key={index}>
