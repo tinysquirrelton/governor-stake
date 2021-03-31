@@ -34,6 +34,7 @@ export default class App extends Component {
 
     this.walletconnect = null;
     this.web3 = null;
+    this.userLoyalBalance = 0;
   }
 
   async componentDidMount() {
@@ -44,8 +45,8 @@ export default class App extends Component {
     await this.walletconnect.connectWeb3();
     this.web3 = await this.walletconnect.getWeb3();
 
-    this.getMineStats();
     let self = this;
+    this.getMineStats();
     this.statsInterval = setInterval(function () {
       self.getMineStats();
     }, 5000);
@@ -78,6 +79,7 @@ export default class App extends Component {
     this.loyalContract = loyalC;
     this.stakeContract = await stakeC;
     await this.getLoyalLeft();
+    await this.getUserLoyalBalance();
   };
 
   onResetConnect = () => {
@@ -159,6 +161,11 @@ export default class App extends Component {
     });
   };
 
+  getUserLoyalBalance = async () => {
+    let balance = await this.loyalContract.methods.balanceOf(this.walletconnect?.account).call() / 10**18;
+    this.userLoyalBalance = balance.toLocaleString();
+  }
+
   getTokenValues = async () => {
     await this.token.getStakeable(this.web3);
     await this.token.getStaked(this.web3, this.stakeContract);
@@ -186,6 +193,7 @@ export default class App extends Component {
           loyalLeft={this.state.loyalLeft}
           stakeContract={this.stakeContract}
           walletconnect={this.walletconnect}
+          userLoyalBalance={this.userLoyalBalance}
         />
       </>
     );
