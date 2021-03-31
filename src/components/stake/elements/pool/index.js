@@ -109,6 +109,8 @@ export default class Pool extends Component {
 
   onClaim = () => {
     const { token, stakeContract, walletconnect } = this.props;
+
+    console.log(token)
     stakeContract.methods
       .getReward()
       .send({ from: walletconnect.account })

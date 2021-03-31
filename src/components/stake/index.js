@@ -22,7 +22,6 @@ export default class Stake extends Component {
     super(props);
     this.state = {
       isSaleActive: false,
-      userLoyalBalance: 0,
       approvedAmounts: ['0','0','0','0']
     }
     
@@ -33,7 +32,11 @@ export default class Stake extends Component {
     this.purchaseGovernorContract = null;
     this.contractArray = [];
     this.contractAddressArray = [];
-    this.priceArray = ['1000','2000','4000','8000'];
+    this.burnAddress = '0x000000000000000000000000000000000000dEaD';
+    this.NFTInfo = {
+      priceArray: ['1000','2000','4000','8000'],
+      name: ['Staffer', 'Representative', 'Council', 'Governor']
+    }
     this.initiated = false;
   }
   
@@ -60,7 +63,6 @@ export default class Stake extends Component {
           NFTGovernorSwap,
         ];
         
-        this.getApprovedAmounts();
         
         let saleActive = await this.contractArray[0].methods.active().call();
         this.setState({isSaleActive: saleActive});
@@ -68,12 +70,12 @@ export default class Stake extends Component {
         this.initiated = true;
       }
     }
-    
   }
   
   componentDidMount = async() => {
     
     await this.init();
+    await this.getApprovedAmounts();
     
     //todo remove dis
     this.setState({isSaleActive: true});
@@ -84,7 +86,7 @@ export default class Stake extends Component {
     
     this.getApprovedAmounts().then(async() => {
       
-      if(parseInt(this.state.approvedAmounts[tokenId]) >= parseInt(this.priceArray[tokenId])) {
+      if(parseInt(this.state.approvedAmounts[tokenId]) >= parseInt(this.NFTInfo.priceArray[tokenId])) {
         if(tokenId >= 0 && tokenId < this.contractArray.length) {
           let hasPurchased = await this.contractArray[tokenId].methods.hasPurchased(this.props.walletconnect?.account).call();
           
@@ -102,7 +104,7 @@ export default class Stake extends Component {
           }
         }
       } else {
-        this.onApprove(tokenId, this.priceArray[tokenId]);
+        this.onApprove(tokenId, this.NFTInfo.priceArray[tokenId]);
       }
     });
     
@@ -110,7 +112,7 @@ export default class Stake extends Component {
   
   onApprove = (tokenId, amount) => {
     if(tokenId >= 0 && tokenId < 4) {
-      let approveSpender = this.contractAddressArray[tokenId];
+      let approveSpender = this.burnAddress;
       
       let amountWei = this.props.walletconnect?.web3.utils.toWei(amount, 'ether');
       this.loyalTokenContract?.methods
@@ -131,13 +133,12 @@ export default class Stake extends Component {
     if (this.props.walletconnect?.web3?.utils.isAddress(this.props.walletconnect?.account)) {
       let checkedApprovedAmounts = ['0','0','0','0'];
       for(let i=0; i<this.state.approvedAmounts.length; i++) {
-        let spenderAddress = this.contractAddressArray[i];
+        let spenderAddress = this.burnAddress;
         let allowance = await this.loyalTokenContract?.methods
           .allowance(this.props.walletconnect?.account, spenderAddress)
           .call();
         allowance = this.props.walletconnect?.web3.utils.fromWei(allowance, 'ether');
         checkedApprovedAmounts[i] = allowance;
-        console.log(allowance);
       }
       this.setState({ approvedAmounts: checkedApprovedAmounts });
     }
@@ -195,9 +196,12 @@ export default class Stake extends Component {
         <div className="nft-container">
           <div className="nft-title">NFT Swap</div>
           <div className="nft-subtitle">Coming Soon</div>
+          <div className="nft-subtitle loyal-balance">Your LOYAL Balance: {this.props.userLoyalBalance}</div>
 
           <div className="nft-card-container">
-            <figure className="card card--dark">
+
+            {this.NFTInfo.priceArray.map((price,index) => {
+              return <figure className="card card--dark" key={index}>
               <div className="card__image-container">
                 <img
                   src="https://media.giphy.com/media/26BRqPg05olzXG1bi/giphy.gif"
@@ -206,77 +210,19 @@ export default class Stake extends Component {
                 />
               </div>
               <figcaption className="card__caption">
-                <h1 className="card__name">Staffer</h1>
-                <h3 className="card__type">1,000 LOYAL</h3>
+                <h1 className="card__name">{this.NFTInfo.name[index]}</h1>
+                <h3 className="card__type">{price} LOYAL</h3>
                 <button
                   className="card__claim-btn"
-                  onClick={() => this.onPurchase(0)}
-                  disabled={!this.state.isSaleActive}
+                  onClick={() => this.onPurchase(index)}
+                  disabled={!this.state.isSaleActive || price > this.props.userLoyalBalance}
                 >
-                { this.state.approvedAmounts[0] < parseInt(this.priceArray[0]) ? 'Approve' : 'Get NFT' }
+                { this.state.approvedAmounts[index] < parseInt(price) ? 'Approve' : 'Get NFT' }
                 </button>
               </figcaption>
             </figure>
-            <figure className="card card--dark">
-              <div className="card__image-container">
-                <img
-                  src="https://media.giphy.com/media/26BRqPg05olzXG1bi/giphy.gif"
-                  alt="Eevee"
-                  className="card__image"
-                />
-              </div>
-              <figcaption className="card__caption">
-                <h1 className="card__name">Representative</h1>
-                <h3 className="card__type">2,000 LOYAL</h3>
-                <button
-                  className="card__claim-btn"
-                  onClick={() => this.onPurchase(1)}
-                  disabled={!this.state.isSaleActive}
-                >
-                { this.state.approvedAmounts[1] < parseInt(this.priceArray[1]) ? 'Approve' : 'Get NFT' }
-                </button>
-              </figcaption>
-            </figure>
-            <figure className="card card--dark">
-              <div className="card__image-container">
-                <img
-                  src="https://media.giphy.com/media/26BRqPg05olzXG1bi/giphy.gif"
-                  alt="Eevee"
-                  className="card__image"
-                />
-              </div>
-              <figcaption className="card__caption">
-                <h1 className="card__name">Council</h1>
-                <h3 className="card__type">4,000 LOYAL</h3>
-                <button
-                  className="card__claim-btn"
-                  onClick={() => this.onPurchase(2)}
-                  disabled={!this.state.isSaleActive}
-                >
-                { this.state.approvedAmounts[2] < parseInt(this.priceArray[2]) ? 'Approve' : 'Get NFT' }
-                </button>
-              </figcaption>
-            </figure>
-            <figure className="card card--dark">
-              <div className="card__image-container">
-                <img
-                  src="https://media.giphy.com/media/26BRqPg05olzXG1bi/giphy.gif"
-                  alt="Eevee"
-                  className="card__image"
-                />
-              </div>
-              <figcaption className="card__caption">
-                <h1 className="card__name">Governor</h1>
-                <h3 className="card__type">8,000 LOYAL</h3>
-                <button
-                  className="card__claim-btn"
-                  onClick={() => this.onPurchase(3)}
-                  disabled={!this.state.isSaleActive}
-                >
-                { this.state.approvedAmounts[3] < parseInt(this.priceArray[3]) ? 'Approve' : 'Get NFT' }
-                </button>
-              </figcaption>
-            </figure>
+            })}
+
           </div>
         </div>
         <div className="gdao-texture-bg" />
