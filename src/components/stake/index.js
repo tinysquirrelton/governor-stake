@@ -16,10 +16,10 @@ import {
 } from "../../utilities/constants/constants";
 
 
-import StafferMp4 from "../../assets/nfts/Staffer.mp4";
-import RepresentativeMp4 from "../../assets/nfts/Representative.mp4";
-import CouncilMp4 from "../../assets/nfts/Council.mp4";
-import GovernorMp4 from "../../assets/nfts/Governor.mp4";
+import StafferMp4 from "../../assets/nfts/staffer-nft.mp4";
+import RepresentativeMp4 from "../../assets/nfts/representative-nft.mp4";
+import CouncilMp4 from "../../assets/nfts/council-nft.mp4";
+import GovernorMp4 from "../../assets/nfts/governor-nft.mp4";
 
 const zeroPad = (num, places) => String(num).padStart(places, '0');
 
