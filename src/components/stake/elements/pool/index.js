@@ -192,6 +192,7 @@ export default class Pool extends Component {
               buttonTitle={"Stake"}
               isConnected={walletconnect?.isConnected}
               isStake={true}
+              enabled={false}
               valueApproved={token.approved}
               subtitle={"Approved: " + currApproved}
               subtitleAltStyle={true}
@@ -207,6 +208,7 @@ export default class Pool extends Component {
               buttonTitle={"Withdraw"}
               isConnected={walletconnect?.isConnected}
               isStake={false}
+              enabled={true}
               subtitle={""}
             />
           </div>
