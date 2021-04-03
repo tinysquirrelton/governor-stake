@@ -167,35 +167,9 @@ export default class Pool extends Component {
         )}
         <div className="expanded">
           <div className="statistics">
-            <div className="title">Statistics:</div>
-            <Statistics
-              t={`${token.unit} Staked`}
-              v={`${convertToETH(token.staked, token.unit)} ${token.unit}`}
-              isConnected={walletconnect?.isConnected}
-            />
-            <Statistics
-              t={"Claimable Rewards"}
-              v={`${roundValue(token.rewards)} LOYAL`}
-              isConnected={walletconnect?.isConnected}
-            />
+            Loyalty Mine is <span>closed</span>
           </div>
           <div className="fields">
-            <InputField
-              title={"Wallet Balance"}
-              current={convertToETH(token.stakeable, token.unit)}
-              unit={token.unit}
-              onMax={this.onMaxStake}
-              onAction={this.onStakeExecute}
-              onAction1={this.onApprove}
-              value={toStake}
-              onChange={(e) => this.onStakeChange(e)}
-              buttonTitle={"Stake"}
-              isConnected={walletconnect?.isConnected}
-              isStake={true}
-              valueApproved={token.approved}
-              subtitle={"Approved: " + currApproved}
-              subtitleAltStyle={true}
-            />
             <InputField
               title={"Staked Amount"}
               current={convertToETH(token.staked, token.unit)}
@@ -207,6 +181,7 @@ export default class Pool extends Component {
               buttonTitle={"Withdraw"}
               isConnected={walletconnect?.isConnected}
               isStake={false}
+              enabled={true}
               subtitle={""}
             />
           </div>

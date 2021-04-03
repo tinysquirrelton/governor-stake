@@ -14,6 +14,7 @@ export const InputField = ({
   isConnected,
   valueApproved,
   isStake,
+  enabled,
   subtitle,
   subtitleForceNormalStyle,
 }) => (
@@ -53,6 +54,7 @@ export const InputField = ({
         className={isStake ? "action-btn" : "hide"}
         onClick={onAction1}
         disabled={
+          !enabled ||
           !isConnected ||
           (isStake &&
             (!valueApproved ||
@@ -66,6 +68,7 @@ export const InputField = ({
         className="action-btn"
         onClick={onAction}
         disabled={
+          !enabled ||
           !isConnected ||
           value === 0 ||
           value === "0" ||
