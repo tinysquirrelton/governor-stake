@@ -73,29 +73,16 @@
     background-color: white;
     padding: 14px 34px;
     & .statistics {
-      & .title {
-        font-size: 16px;
-        font-weight: 500;
-      }
-      & .stats {
-        display: flex;
-        align-items: center;
-        letter-spacing: 0.5px;
-        color: black;
-        margin-top: 8px;
-        & .title {
-          width: 47.5%;
-          font-weight: 300;
-          font-size: 12px;
-          @include sm {
-            font-size: 14px;
-          }
-        }
-        & .value {
-          width: 52.5%;
-          font-weight: 500;
-          font-size: 14px;
-        }
+      display: block;
+      color: black;
+      text-align: center;
+      font-size: 18px;
+      & span {
+        color: rgb(202, 0, 0);
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-left: 2px;
       }
     }
     & .fields {
