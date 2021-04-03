@@ -74,48 +74,27 @@
     display: block;
     background-color: white;
     & .statistics {
-      display: flex;
-      align-items: center;
-      padding: 30px 34px;
-      background-color: #4a8cc9;
-      color: white;
-      & .title {
-        font-size: 18px;
-        font-weight: 500;
-        padding: 0 25px 0 74px;
-      }
-      & .stats {
-        display: block;
-        letter-spacing: 0.5px;
-        text-align: center;
-        &:nth-of-type(2) {
-          width: 25%;
-        }
-        &:nth-of-type(3) {
-          width: 21.5%;
-        }
-        &:nth-of-type(4) {
-          width: 30%;
-        }
-        & .title {
-          font-weight: 300;
-          font-size: 12px;
-          padding: 0;
-        }
-        & .value {
-          font-size: 18px;
-          font-weight: 500;
-        }
+      display: block;
+      color: black;
+      text-align: center;
+      margin-top: 25px;
+      font-size: 18px;
+      & span {
+        color: rgb(202, 0, 0);
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-left: 2px;
       }
     }
     & .fields {
       display: flex;
       justify-content: space-between;
       padding: 30px 104px;
-
       & .input-field {
         display: block;
-        width: 45%;
+        width: 50%;
+        margin: 0 auto;
         & .input-label {
           display: block;
           padding-bottom: 8px;
@@ -191,13 +170,13 @@
       & .input-field {
         &:first-child {
           & .input-label {
-            text-align: right;
+            text-align: center;
           }
           & .input-subtitle {
-            text-align: right;
+            text-align: center;
           }
           & .action-btn {
-            margin: 8px 0 20px auto;
+            margin: 0 auto 20px auto;
           }
         }
       }
