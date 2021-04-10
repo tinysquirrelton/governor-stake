@@ -61,7 +61,7 @@ export default class Stake extends Component {
   }
   
   init = async() => {
-    if(await this.props.walletconnect != null && !this.initialized) {
+    if(this.props.walletconnect != null && this.props.walletconnect.web3 != null && !this.initialized) {
       this.loyalTokenContract = await new this.props.walletconnect.web3.eth.Contract(ERC20.abi, LOYALAddress);
       this.purchaseStafferContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTStafferSwap);
       this.purchaseRepresentativeContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTRepresentativeSwap);
@@ -290,8 +290,9 @@ export default class Stake extends Component {
                   value={this.state.toSwap}
                   step={0.001}
                   onChange={(e) => this.onToswapChange(e)}
-                  disabled={!this.props.walletconnect?.isConnected}
+                  disabled={this.props.walletconnect?.isConnected !== true}
                   min="0"
+                  max={this.props.userLoyalBalanceRaw}
                 />
               </div>
             </div>
@@ -301,7 +302,7 @@ export default class Stake extends Component {
               className="card__swap-btn"
               onClick={this.onSwap}
               //todo: uncomment
-              //disabled={!this.state.hasSaleEnded || this.props.userLoyalBalanceRaw <= 0}
+              disabled={this.props.walletconnect?.isConnected !== true || !this.state.hasSaleEnded || this.props.userLoyalBalanceRaw <= 0}
             >
             { this.state.approvedAmounts[0] < this.state.toSwap ? 'Approve' : 'Swap' }
             </button>
