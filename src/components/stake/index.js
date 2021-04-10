@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
+import BigNumber from "bignumber.js/bignumber";
 import { ConnectButton } from "./elements/connectButton";
 import Pool from "./elements/pool";
 import { roundValue } from "../../utilities/helpers";
@@ -7,11 +8,13 @@ import "./style.scss";
 
 import ERC20 from "./abi/ERC20.json";
 import NFTPurchase from "./abi/NFTPurchase.json";
+import LoyalGdaoSwap from "./abi/Swap.json";
 import {
   NFTStafferSwap,
   NFTRepresentativeSwap,
   NFTCouncilSwap,
   NFTGovernorSwap,
+  GDAOSwap,
   LOYALAddress
 } from "../../utilities/constants/constants";
 
@@ -29,18 +32,23 @@ export default class Stake extends Component {
     super(props);
     this.state = {
       isSaleActive: false,
-      hasSaleStarted: false,
+      hasSaleStarted: true,
+      hasSaleEnded: false,
       saleStartCountdown: '00:00:00',
       approvedAmounts: ['0','0','0','0'],
-      hasPurchasedArray: [false,false,false,false]
+      hasPurchasedArray: [false,false,false,false],
+      toSwap: 0,
+      toReceive: 0
     }
     
     this.saleStartTime = 1617220800*1000;
+    this.saleEndTime = 1618081200*1000;
     this.loyalTokenContract = null;
     this.purchaseStafferContract = null;
     this.purchaseRepresentativeContract = null;
     this.purchaseCouncilContract = null;
     this.purchaseGovernorContract = null;
+    this.gdaoSwapContract = null;
     this.contractArray = [];
     this.contractAddressArray = [];
     this.burnAddress = '0x000000000000000000000000000000000000dEaD';
@@ -53,12 +61,13 @@ export default class Stake extends Component {
   }
   
   init = async() => {
-    if(await this.props.walletconnect != null && !this.initialized) {
+    if(this.props.walletconnect != null && this.props.walletconnect.web3 != null && !this.initialized) {
       this.loyalTokenContract = await new this.props.walletconnect.web3.eth.Contract(ERC20.abi, LOYALAddress);
       this.purchaseStafferContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTStafferSwap);
       this.purchaseRepresentativeContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTRepresentativeSwap);
       this.purchaseCouncilContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTCouncilSwap);
       this.purchaseGovernorContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTGovernorSwap);
+      this.gdaoSwapContract = await new this.props.walletconnect.web3.eth.Contract(LoyalGdaoSwap.abi, GDAOSwap);
       
       this.contractArray = [
         this.purchaseStafferContract,
@@ -90,17 +99,17 @@ export default class Stake extends Component {
     let self = this;
     let countdownInterval = setInterval(function() {
       let now = new Date().getTime();
-      let startDistance = self.saleStartTime - now;
+      let endDistance = self.saleEndTime - now;
 
-      let hours = Math.floor((startDistance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      let minutes = Math.floor((startDistance % (1000 * 60 * 60)) / (1000 * 60));
-      let seconds = Math.floor((startDistance % (1000 * 60)) / 1000);
+      let hours = Math.floor((endDistance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      let minutes = Math.floor((endDistance % (1000 * 60 * 60)) / (1000 * 60));
+      let seconds = Math.floor((endDistance % (1000 * 60)) / 1000);
 
       let newTimer = zeroPad(hours,2) + ":" + zeroPad(minutes,2) + ":" + zeroPad(seconds,2);
       self.setState({saleStartCountdown: newTimer});
 
-      if (startDistance < 0) {
-        self.setState({hasSaleStarted: true});
+      if (endDistance < 0) {
+        self.setState({hasSaleEnded: true});
       }
       
     }, 1000);
@@ -110,7 +119,7 @@ export default class Stake extends Component {
     }, 1000);
   }
   
-  onPurchase = async(tokenId) => {    
+  onPurchase = async(tokenId) => {  
     this.getApprovedAmounts().then(async() => {
       
       if(parseInt(this.state.approvedAmounts[tokenId]) >= parseInt(this.NFTInfo.priceArray[tokenId])) {
@@ -173,6 +182,52 @@ export default class Stake extends Component {
     this.setState({ hasPurchasedArray: statusArray });
   }
   
+  onGetSwapAmount = async(tokenAmount) => {
+    let amountWei = this.props.walletconnect?.web3.utils.toWei(tokenAmount.toString(), 'ether');
+    let swapCalculated = await this.gdaoSwapContract.methods.calculateTokens(amountWei).call();
+    let swapCalculatedFinal = BigNumber(this.props.walletconnect?.web3.utils.fromWei(swapCalculated.toString(), 'ether'));
+    this.setState({ toReceive: swapCalculatedFinal.toFixed(4) });
+  }
+  
+  onToswapChange = (e) => {
+    
+    let swappable = BigNumber(
+      this.props.userLoyalBalanceRaw
+    ).toNumber();
+
+    let toSwap =
+      BigNumber(e.target.value).toNumber() > swappable
+        ? swappable
+        : BigNumber(e.target.value).toNumber();
+    
+    this.onGetSwapAmount(toSwap);
+    
+    this.setState({
+      toSwap: isNaN(toSwap) ? "" : toSwap,
+    });
+  };
+  
+  onMax = () => {
+    this.setState({ toSwap: this.props.userLoyalBalanceRaw });
+  };
+  
+  onSwap = async() => {
+    if(this.state.approvedAmounts[0] < this.state.toSwap) {
+      console.log(this.state.toSwap);
+      this.onApprove(this.state.toSwap.toString());
+    } else {
+      let toSwap = this.props.walletconnect?.web3.utils.toWei(this.state.toSwap.toString(), 'ether');
+      this.gdaoSwapContract.methods
+        .swapTokens(toSwap)
+        .send({ from: this.props.walletconnect?.account })
+        .then(async(res) => {
+          toast.success("Successfully swapped LOYAL for GDAO.");
+          await this.getApprovedAmounts();
+        })
+        .catch((err) => toast.error("Swap failed."));
+    }
+  }
+  
   render() {
     return (
       <div className="max-width-container">
@@ -222,6 +277,37 @@ export default class Stake extends Component {
           </div>
           <Pool token={this.props.token} {...this.props} />
         </div>
+        <div className="swap-wrapper">
+          <div className="card">
+            <h2>LOYAL-GDAO Swap</h2>
+            <div className="input-container">
+              <button className="max-btn" onClick={this.onMax} disabled={!this.props.walletconnect?.isConnected}>
+                Max
+              </button>
+              <div className="input">
+                <input
+                  type="number"
+                  value={this.state.toSwap}
+                  step={0.001}
+                  onChange={(e) => this.onToswapChange(e)}
+                  disabled={this.props.walletconnect?.isConnected !== true}
+                  min="0"
+                  max={this.props.userLoyalBalanceRaw}
+                />
+              </div>
+            </div>
+            You will receive {this.state.toReceive} GDAO.
+            <br/><br/>
+            <button
+              className="card__swap-btn"
+              onClick={this.onSwap}
+              //todo: uncomment
+              disabled={this.props.walletconnect?.isConnected !== true || !this.state.hasSaleEnded || this.props.userLoyalBalanceRaw <= 0}
+            >
+            { this.state.approvedAmounts[0] < this.state.toSwap ? 'Approve' : 'Swap' }
+            </button>
+          </div>
+        </div>
         <div className="nft-container">
           <div className="nft-title">NFT Swap</div>
           <div className="nft-subtitle loyal-balance">Your LOYAL Balance: {this.props.userLoyalBalance}</div>
@@ -251,10 +337,9 @@ export default class Stake extends Component {
             })}
 
           </div>
-          <div className={this.state.hasSaleStarted ? "nft-lock" : "nft-lock active" }>
+          <div className={!this.state.hasSaleEnded ? "nft-lock" : "nft-lock active" }>
             <div className="infoWrapper">
-              <h3 className="header">Coming soon</h3>
-              <h2 className="countdown">{this.state.saleStartCountdown}</h2>
+              <h3 className="header">NFT sale has concluded</h3>
             </div>
           </div>
         </div>
