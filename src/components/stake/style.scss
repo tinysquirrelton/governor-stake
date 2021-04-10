@@ -71,6 +71,86 @@ button[disabled] {
   cursor: default;
 }
 
+.swap-wrapper {
+  max-width: 1000px;
+  margin: auto;
+  text-align: center;
+  padding: 1px;
+  background-color: #fff;
+  z-index: 10;
+  position: relative;
+  border: 1px solid #4a8cc9;
+  border-radius: 0.75rem;
+  box-shadow: $shadow-soft-light;
+  
+  & .card {
+    padding: 20px;
+    
+    & h2 {
+      font-size: 2rem;
+      margin-top: 0;
+      font-weight: 500;
+    }
+    
+    & .input-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: solid 1px darkgrey;
+      border-radius: 0.5rem;
+      padding: 8px 14px;
+      margin: auto;
+      margin-bottom: 5px;
+      max-width: 400px;
+      & .max-btn {
+        font-size: 14px;
+        color: #999999;
+        border: none;
+        background-color: transparent;
+      }
+      & input[type="number"] {
+        display: block;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        text-align: right;
+        width: 140px;
+        margin-top: 2px;
+        border: none;
+        background-color: transparent;
+        &:focus {
+          outline: none !important;
+        }
+      }
+    }
+    
+    &__swap-btn {
+      display: block;
+      margin: 8px auto 4px auto;
+      background-color: white;
+      border: solid 1px lightgray;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 6px rgba(0,0,0,0.12);
+      color: #354e8e;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 0;
+      width: 150px;
+      cursor: pointer;
+      &:hover {
+        color: white;
+        background-color: #4a8cc9;
+      }
+      &:disabled,
+      &[disabled] {
+        border-color: #cccccc;
+        color: #aaaaaa;
+        background-color: #dddddd;
+      }
+    }
+  }
+}
+
 .nft-container {
   display: block;
   position: relative;
