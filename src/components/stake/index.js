@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
+import BigNumber from "bignumber.js/bignumber";
 import { ConnectButton } from "./elements/connectButton";
 import Pool from "./elements/pool";
 import { roundValue } from "../../utilities/helpers";
@@ -29,13 +30,16 @@ export default class Stake extends Component {
     super(props);
     this.state = {
       isSaleActive: false,
-      hasSaleStarted: false,
+      hasSaleStarted: true,
+      hasSaleEnded: false,
       saleStartCountdown: '00:00:00',
       approvedAmounts: ['0','0','0','0'],
-      hasPurchasedArray: [false,false,false,false]
+      hasPurchasedArray: [false,false,false,false],
+      toSwap: 0
     }
     
     this.saleStartTime = 1617220800*1000;
+    this.saleEndTime = 1618081200*1000;
     this.loyalTokenContract = null;
     this.purchaseStafferContract = null;
     this.purchaseRepresentativeContract = null;
@@ -90,17 +94,17 @@ export default class Stake extends Component {
     let self = this;
     let countdownInterval = setInterval(function() {
       let now = new Date().getTime();
-      let startDistance = self.saleStartTime - now;
+      let endDistance = self.saleEndTime - now;
 
-      let hours = Math.floor((startDistance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      let minutes = Math.floor((startDistance % (1000 * 60 * 60)) / (1000 * 60));
-      let seconds = Math.floor((startDistance % (1000 * 60)) / 1000);
+      let hours = Math.floor((endDistance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      let minutes = Math.floor((endDistance % (1000 * 60 * 60)) / (1000 * 60));
+      let seconds = Math.floor((endDistance % (1000 * 60)) / 1000);
 
       let newTimer = zeroPad(hours,2) + ":" + zeroPad(minutes,2) + ":" + zeroPad(seconds,2);
       self.setState({saleStartCountdown: newTimer});
 
-      if (startDistance < 0) {
-        self.setState({hasSaleStarted: true});
+      if (endDistance < 0) {
+        self.setState({hasSaleEnded: true});
       }
       
     }, 1000);
@@ -173,6 +177,32 @@ export default class Stake extends Component {
     this.setState({ hasPurchasedArray: statusArray });
   }
   
+  
+  onToswapChange = (e) => {
+    
+    let swappable = BigNumber(
+      this.props.userLoyalBalanceRaw
+    ).toNumber();
+
+    let toSwap =
+      BigNumber(e.target.value).toNumber() > swappable
+        ? swappable
+        : BigNumber(e.target.value).toNumber();
+
+    this.setState({
+      toSwap: isNaN(toSwap) ? "" : toSwap,
+    });
+  };
+  
+  
+  onMax = () => {
+    this.setState({ toSwap: this.props.userLoyalBalanceRaw });
+  };
+  
+  onSwap = async() => {
+    return true;
+  }
+  
   render() {
     return (
       <div className="max-width-container">
@@ -222,6 +252,33 @@ export default class Stake extends Component {
           </div>
           <Pool token={this.props.token} {...this.props} />
         </div>
+        <div className="swap-wrapper">
+          <div className="card">
+            <h2>LOYAL-GDAO Swap</h2>
+            <div className="input-container">
+              <button className="max-btn" onClick={this.onMax} disabled={!this.props.walletconnect?.isConnected}>
+                Max
+              </button>
+              <div className="input">
+                <input
+                  type="number"
+                  value={this.state.toSwap}
+                  step={0.001}
+                  onChange={this.onToswapChange}
+                  disabled={!this.props.walletconnect?.isConnected}
+                  min="0"
+                />
+              </div>
+            </div>
+            <button
+              className="card__swap-btn"
+              onClick={this.onSwap}
+              disabled={!this.state.hasSaleEnded || this.props.userLoyalBalanceRaw <= 0}
+            >
+            { this.state.approvedAmounts[0] < this.state.toSwap ? 'Approve' : 'Swap' }
+            </button>
+          </div>
+        </div>
         <div className="nft-container">
           <div className="nft-title">NFT Swap</div>
           <div className="nft-subtitle loyal-balance">Your LOYAL Balance: {this.props.userLoyalBalance}</div>
@@ -251,10 +308,9 @@ export default class Stake extends Component {
             })}
 
           </div>
-          <div className={this.state.hasSaleStarted ? "nft-lock" : "nft-lock active" }>
+          <div className={!this.state.hasSaleEnded ? "nft-lock" : "nft-lock active" }>
             <div className="infoWrapper">
-              <h3 className="header">Coming soon</h3>
-              <h2 className="countdown">{this.state.saleStartCountdown}</h2>
+              <h3 className="header">NFT sale has concluded</h3>
             </div>
           </div>
         </div>
