@@ -8,11 +8,13 @@ import "./style.scss";
 
 import ERC20 from "./abi/ERC20.json";
 import NFTPurchase from "./abi/NFTPurchase.json";
+import LoyalGdaoSwap from "./abi/Swap.json";
 import {
   NFTStafferSwap,
   NFTRepresentativeSwap,
   NFTCouncilSwap,
   NFTGovernorSwap,
+  GDAOSwap,
   LOYALAddress
 } from "../../utilities/constants/constants";
 
@@ -35,7 +37,8 @@ export default class Stake extends Component {
       saleStartCountdown: '00:00:00',
       approvedAmounts: ['0','0','0','0'],
       hasPurchasedArray: [false,false,false,false],
-      toSwap: 0
+      toSwap: 0,
+      toReceive: 0
     }
     
     this.saleStartTime = 1617220800*1000;
@@ -45,6 +48,7 @@ export default class Stake extends Component {
     this.purchaseRepresentativeContract = null;
     this.purchaseCouncilContract = null;
     this.purchaseGovernorContract = null;
+    this.gdaoSwapContract = null;
     this.contractArray = [];
     this.contractAddressArray = [];
     this.burnAddress = '0x000000000000000000000000000000000000dEaD';
@@ -63,6 +67,7 @@ export default class Stake extends Component {
       this.purchaseRepresentativeContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTRepresentativeSwap);
       this.purchaseCouncilContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTCouncilSwap);
       this.purchaseGovernorContract = await new this.props.walletconnect.web3.eth.Contract(NFTPurchase.abi, NFTGovernorSwap);
+      this.gdaoSwapContract = await new this.props.walletconnect.web3.eth.Contract(LoyalGdaoSwap.abi, GDAOSwap);
       
       this.contractArray = [
         this.purchaseStafferContract,
@@ -114,7 +119,7 @@ export default class Stake extends Component {
     }, 1000);
   }
   
-  onPurchase = async(tokenId) => {    
+  onPurchase = async(tokenId) => {  
     this.getApprovedAmounts().then(async() => {
       
       if(parseInt(this.state.approvedAmounts[tokenId]) >= parseInt(this.NFTInfo.priceArray[tokenId])) {
@@ -177,6 +182,12 @@ export default class Stake extends Component {
     this.setState({ hasPurchasedArray: statusArray });
   }
   
+  onGetSwapAmount = async(tokenAmount) => {
+    let amountWei = this.props.walletconnect?.web3.utils.toWei(tokenAmount.toString(), 'ether');
+    let swapCalculated = await this.gdaoSwapContract.methods.calculateTokens(amountWei).call();
+    let swapCalculatedFinal = BigNumber(this.props.walletconnect?.web3.utils.fromWei(swapCalculated.toString(), 'ether'));
+    this.setState({ toReceive: swapCalculatedFinal.toFixed(4) });
+  }
   
   onToswapChange = (e) => {
     
@@ -188,19 +199,33 @@ export default class Stake extends Component {
       BigNumber(e.target.value).toNumber() > swappable
         ? swappable
         : BigNumber(e.target.value).toNumber();
-
+    
+    this.onGetSwapAmount(toSwap);
+    
     this.setState({
       toSwap: isNaN(toSwap) ? "" : toSwap,
     });
   };
-  
   
   onMax = () => {
     this.setState({ toSwap: this.props.userLoyalBalanceRaw });
   };
   
   onSwap = async() => {
-    return true;
+    if(this.state.approvedAmounts[0] < this.state.toSwap) {
+      console.log(this.state.toSwap);
+      this.onApprove(this.state.toSwap.toString());
+    } else {
+      let toSwap = this.props.walletconnect?.web3.utils.toWei(this.state.toSwap.toString(), 'ether');
+      this.gdaoSwapContract.methods
+        .swapTokens(toSwap)
+        .send({ from: this.props.walletconnect?.account })
+        .then(async(res) => {
+          toast.success("Successfully swapped LOYAL for GDAO.");
+          await this.getApprovedAmounts();
+        })
+        .catch((err) => toast.error("Swap failed."));
+    }
   }
   
   render() {
@@ -264,16 +289,19 @@ export default class Stake extends Component {
                   type="number"
                   value={this.state.toSwap}
                   step={0.001}
-                  onChange={this.onToswapChange}
+                  onChange={(e) => this.onToswapChange(e)}
                   disabled={!this.props.walletconnect?.isConnected}
                   min="0"
                 />
               </div>
             </div>
+            You will receive {this.state.toReceive} GDAO.
+            <br/><br/>
             <button
               className="card__swap-btn"
               onClick={this.onSwap}
-              disabled={!this.state.hasSaleEnded || this.props.userLoyalBalanceRaw <= 0}
+              //todo: uncomment
+              //disabled={!this.state.hasSaleEnded || this.props.userLoyalBalanceRaw <= 0}
             >
             { this.state.approvedAmounts[0] < this.state.toSwap ? 'Approve' : 'Swap' }
             </button>

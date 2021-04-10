@@ -11,7 +11,7 @@ export const USDCWETHAddress = "0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc";
 
 // GDAO Address
 export const GDAOAddress = testnet
-  ? "0xe6f1f61b2419ef3b2658e1ffc5118ba5d5e5c891"
+  ? "0x666b74baB448034643FAB9a600BFb422FD0b4482"
   : "0x515d7E9D75E2b76DB60F8a051Cd890eBa23286Bc";
 
 // GDAO-WETH LP Address
@@ -31,7 +31,7 @@ export const USDCAddress = testnet
 
 // Burn Purgatory Address
 export const LOYALAddress = testnet
-? "0x3035311E004FA142E10A0e9C6b0ce8eACc4d9774"
+? "0x84494BcD15BFcB1bb0c1587079935F09e34d61C7"
 : "0xEdA4F23957d2F819c22761C4d6D6157bd3fE0724";
 
 
@@ -51,6 +51,11 @@ export const NFTCouncilSwap = testnet
 
 export const NFTGovernorSwap = testnet
 ? "0x5313f09c7035ef572ba2794ec4cabe22036c2b7f"
+: "0x42fd58d8984673ba158d3ba16f19e147d916b265";
+
+
+export const GDAOSwap = testnet
+? "0x0a20dd9A995fA3d0a7E7BA00e9cA6FAde1124Af3"
 : "0x42fd58d8984673ba158d3ba16f19e147d916b265";
 
 // Chain ID - 1: Mainnet - 3: Ropsten
