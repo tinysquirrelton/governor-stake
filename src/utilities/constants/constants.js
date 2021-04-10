@@ -56,7 +56,7 @@ export const NFTGovernorSwap = testnet
 
 export const GDAOSwap = testnet
 ? "0x0a20dd9A995fA3d0a7E7BA00e9cA6FAde1124Af3"
-: "0x42fd58d8984673ba158d3ba16f19e147d916b265";
+: "0x6cfccbdf47041a7aecfe6e198f242d0d463d5723";
 
 // Chain ID - 1: Mainnet - 3: Ropsten
 export const chainId = testnet ? 3 : 1;
