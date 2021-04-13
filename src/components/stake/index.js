@@ -183,10 +183,12 @@ export default class Stake extends Component {
   }
   
   onGetSwapAmount = async(tokenAmount) => {
-    let amountWei = this.props.walletconnect?.web3.utils.toWei(tokenAmount.toString(), 'ether');
-    let swapCalculated = await this.gdaoSwapContract.methods.calculateTokens(amountWei).call();
-    let swapCalculatedFinal = BigNumber(this.props.walletconnect?.web3.utils.fromWei(swapCalculated.toString(), 'ether'));
-    this.setState({ toReceive: swapCalculatedFinal.toFixed(4) });
+    if(!isNaN(tokenAmount)) {
+      let amountWei = this.props.walletconnect?.web3.utils.toWei(tokenAmount.toString(), 'ether');
+      let swapCalculated = await this.gdaoSwapContract.methods.calculateTokens(amountWei).call();
+      let swapCalculatedFinal = BigNumber(this.props.walletconnect?.web3.utils.fromWei(swapCalculated.toString(), 'ether'));
+      this.setState({ toReceive: swapCalculatedFinal.toFixed(4) });
+    }
   }
   
   onToswapChange = (e) => {
@@ -200,6 +202,8 @@ export default class Stake extends Component {
         ? swappable
         : BigNumber(e.target.value).toNumber();
     
+    toSwap = toSwap.toFixed(4);
+    
     this.onGetSwapAmount(toSwap);
     
     this.setState({
@@ -208,7 +212,9 @@ export default class Stake extends Component {
   };
   
   onMax = () => {
-    this.setState({ toSwap: this.props.userLoyalBalanceRaw });
+    let newToSwap = this.props.userLoyalBalanceRaw.toFixed(4);
+    this.setState({ toSwap: newToSwap });
+    this.onGetSwapAmount(newToSwap);
   };
   
   onSwap = async() => {
