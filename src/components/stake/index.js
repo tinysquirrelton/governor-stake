@@ -183,7 +183,7 @@ export default class Stake extends Component {
   }
   
   onGetSwapAmount = async(tokenAmount) => {
-    if(tokenAmount != "" && !isNaN(tokenAmount)) {
+    if(!isNaN(tokenAmount)) {
       let amountWei = this.props.walletconnect?.web3.utils.toWei(tokenAmount.toString(), 'ether');
       let swapCalculated = await this.gdaoSwapContract.methods.calculateTokens(amountWei).call();
       let swapCalculatedFinal = BigNumber(this.props.walletconnect?.web3.utils.fromWei(swapCalculated.toString(), 'ether'));
@@ -203,8 +203,6 @@ export default class Stake extends Component {
         : BigNumber(e.target.value).toNumber();
     
     toSwap = toSwap.toFixed(4);
-    
-    console.log(toSwap);
     
     this.onGetSwapAmount(toSwap);
     
